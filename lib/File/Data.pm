@@ -10,13 +10,13 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE);
-$VERSION = '1.11';
-$DATE = '2003/07/26';
+$VERSION = '1.12';
+$DATE = '2004/04/09';
 $FILE = __FILE__;
 
 use File::Spec;
 use Symbol;
-use File::PM2File;
+use File::Where;
 use File::SmartNL;
 
 use SelfLoader;
@@ -41,10 +41,9 @@ sub pm2datah
     # Only works the one time after loading a module. Thereafter it is closed. No rewinds.
     # 
     #
-    my ($file) = File::PM2File->pm2file( $pm );
-
+    my ($file) = File::Where->where_pm( $pm );
     unless( $file ) {
-        warn "# Cannot find file for $pm\n";
+        warn "# Cannot find $pm file\n";
         return undef;
     }
 
@@ -174,11 +173,11 @@ follow on the next lines. For example,
  => $errors
  ''
 
- =>  $snl->fin( File::Spec->catfile( 'Drivers', 'Driver.pm' ) )
+ =>  $snl->fin( File::Spec->catfile( '_Drivers_', 'Driver.pm' ) )
  '#!perl
  #
  #
- package  File::FileUtil::Drivers::Driver;
+ package  _Drivers_::Driver;
 
  use strict;
  use warnings;
@@ -216,7 +215,7 @@ follow on the next lines. For example,
  =cut
  '
 
- =>    my $fh = $fd->pm2datah('t::File::Drivers::Driver');
+ =>    my $fh = $fd->pm2datah('_Drivers_::Driver');
  =>    my $actual_datah = $snl->fin($fh);
  =>    $actual_datah =~ s/^\s*(.*)\s*$/$1/gs;
  => $actual_datah
@@ -245,7 +244,7 @@ follow on the next lines. For example,
  =cut
  '
 
- =>    $actual_datah = $fd->pm2data('t::File::Drivers::Driver');
+ =>    $actual_datah = $fd->pm2data('_Drivers_::Driver');
  =>    $actual_datah =~ s/^\s*(.*)\s*$/$1/gs;
  => $actual_datah
  '=head1 Title Page
@@ -369,7 +368,7 @@ ANY WAY OUT OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =back
 
-=back
+
 =for html
 <p><br>
 <!-- BLK ID="NOTICE" -->

@@ -10,8 +10,8 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE );
-$VERSION = '0.01';
-$DATE = '2003/07/04';
+$VERSION = '0.02';
+$DATE = '2004/04/09';
 $FILE = __FILE__;
 
 ########
@@ -40,7 +40,7 @@ $FILE = __FILE__;
 
  Version: 
 
- Date: 2003/07/04
+ Date: 2004/04/09
 
  Prepared for: General Public 
 
@@ -130,11 +130,11 @@ L<STD FormDB Test Description Fields|Test::STDmaker/STD FormDB Test Description 
 =head2 ok: 3
 
  DO: ^
-  A:  $snl->fin( File::Spec->catfile( 'Drivers', 'Driver.pm' ) )^
+  A:  $snl->fin( File::Spec->catfile( '_Drivers_', 'Driver.pm' ) )^
   N: pm2datah^
 
   C:
-    my $fh = $fd->pm2datah('t::File::Drivers::Driver');
+    my $fh = $fd->pm2datah('_Drivers_::Driver');
     my $actual_datah = $snl->fin($fh);
     $actual_datah =~ s/^^\s*(.*)\s*$/$1/gs;
  ^
@@ -147,7 +147,7 @@ L<STD FormDB Test Description Fields|Test::STDmaker/STD FormDB Test Description 
   N: pm2data^
 
   C:
-    $actual_datah = $fd->pm2data('t::File::Drivers::Driver');
+    $actual_datah = $fd->pm2data('_Drivers_::Driver');
     $actual_datah =~ s/^^\s*(.*)\s*$/$1/gs;
  ^
   A: $actual_datah^
@@ -333,11 +333,11 @@ SE: ''^
 ok: 2^
 
 DO: ^
- A:  $snl->fin( File::Spec->catfile( 'Drivers', 'Driver.pm' ) )^
+ A:  $snl->fin( File::Spec->catfile( '_Drivers_', 'Driver.pm' ) )^
  N: pm2datah^
 
  C:
-   my $fh = $fd->pm2datah('t::File::Drivers::Driver');
+   my $fh = $fd->pm2datah('_Drivers_::Driver');
    my $actual_datah = $snl->fin($fh);
    $actual_datah =~ s/^^\s*(.*)\s*$/$1/gs;
 ^
@@ -349,7 +349,7 @@ ok: 3^
  N: pm2data^
 
  C:
-   $actual_datah = $fd->pm2data('t::File::Drivers::Driver');
+   $actual_datah = $fd->pm2data('_Drivers_::Driver');
    $actual_datah =~ s/^^\s*(.*)\s*$/$1/gs;
 ^
 

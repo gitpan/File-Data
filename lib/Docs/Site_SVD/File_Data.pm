@@ -10,26 +10,27 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE );
-$VERSION = '0.06';
-$DATE = '2003/07/26';
+$VERSION = '0.07';
+$DATE = '2004/04/09';
 $FILE = __FILE__;
 
 use vars qw(%INVENTORY);
 %INVENTORY = (
-    'lib/Docs/Site_SVD/File_Data.pm' => [qw(0.06 2003/07/26), 'revised 0.05'],
-    'MANIFEST' => [qw(0.06 2003/07/26), 'generated, replaces 0.05'],
-    'Makefile.PL' => [qw(0.06 2003/07/26), 'generated, replaces 0.05'],
-    'README' => [qw(0.06 2003/07/26), 'generated, replaces 0.05'],
-    'lib/File/Data.pm' => [qw(1.11 2003/07/26), 'unchanged'],
-    't/File/Data.d' => [qw(0.01 2003/07/26), 'unchanged'],
-    't/File/Data.pm' => [qw(0.01 2003/06/07), 'unchanged'],
-    't/File/Data.t' => [qw(0.08 2003/07/26), 'revised 0.07'],
-    't/File/Drivers/Driver.pm' => [qw(0.02 2003/07/04), 'unchanged'],
-    't/File/Drivers/Generate.pm' => [qw(0.02 2003/07/04), 'unchanged'],
-    't/File/Drivers/IO.pm' => [qw(0.02 2003/07/04), 'unchanged'],
-    'tlib/File/Package.pm' => [qw(1.1 2003/07/26), 'new'],
-    'tlib/File/SmartNL.pm' => [qw(1.1 2003/07/26), 'unchanged'],
-    'tlib/Test/Tech.pm' => [qw(1.1 2003/07/26), 'unchanged'],
+    'lib/Docs/Site_SVD/File_Data.pm' => [qw(0.07 2004/04/09), 'revised 0.06'],
+    'MANIFEST' => [qw(0.07 2004/04/09), 'generated, replaces 0.06'],
+    'Makefile.PL' => [qw(0.07 2004/04/09), 'generated, replaces 0.06'],
+    'README' => [qw(0.07 2004/04/09), 'generated, replaces 0.06'],
+    'lib/File/Data.pm' => [qw(1.12 2004/04/09), 'revised 1.11'],
+    't/File/Data.d' => [qw(0.03 2004/04/09), 'revised 0.02'],
+    't/File/Data.pm' => [qw(0.02 2004/04/09), 'revised 0.01'],
+    't/File/Data.t' => [qw(0.09 2004/04/09), 'revised 0.08'],
+    't/File/_Drivers_/Driver.pm' => [qw(0.02 2004/04/09), 'new'],
+    't/File/_Drivers_/Generate.pm' => [qw(0.02 2004/04/09), 'new'],
+    't/File/_Drivers_/IO.pm' => [qw(0.02 2004/04/09), 'new'],
+    't/File/File/Package.pm' => [qw(1.14 2004/04/09), 'new'],
+    't/File/File/SmartNL.pm' => [qw(1.13 2004/04/09), 'new'],
+    't/File/Test/Tech.pm' => [qw(1.17 2004/04/09), 'new'],
+    't/File/Data/Secs2.pm' => [qw(1.15 2004/04/09), 'new'],
 
 );
 
@@ -56,11 +57,11 @@ use vars qw(%INVENTORY);
 
   File::Data - Access the __DATA__ section of a program module
 
- Revision: E
+ Revision: F
 
- Version: 0.06
+ Version: 0.07
 
- Date: 2003/07/26
+ Date: 2004/04/09
 
  Prepared for: General Public 
 
@@ -95,7 +96,7 @@ module.
 
 =head2 1.3 Document overview.
 
-This document releases File::Data version 0.06
+This document releases File::Data version 0.07
 providing a description of the inventory, installation
 instructions and other information necessary to
 utilize and track this release.
@@ -108,12 +109,14 @@ system file specification.
 
 =head2 3.1 Inventory of materials released.
 
-This document releases the file found
-at the following repository(s):
+This document releases the file 
 
-   http://www.softwarediamonds/packages/File-Data-0.06
-   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.06
+ File-Data-0.07.tar.gz
 
+found at the following repository(s):
+
+  http://www.softwarediamonds/packages/
+  http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
 
 Restrictions regarding duplication and license provisions
 are as follows:
@@ -180,20 +183,21 @@ consists of the following files:
 
  file                                                         version date       comment
  ------------------------------------------------------------ ------- ---------- ------------------------
- lib/Docs/Site_SVD/File_Data.pm                               0.06    2003/07/26 revised 0.05
- MANIFEST                                                     0.06    2003/07/26 generated, replaces 0.05
- Makefile.PL                                                  0.06    2003/07/26 generated, replaces 0.05
- README                                                       0.06    2003/07/26 generated, replaces 0.05
- lib/File/Data.pm                                             1.11    2003/07/26 unchanged
- t/File/Data.d                                                0.01    2003/07/26 unchanged
- t/File/Data.pm                                               0.01    2003/06/07 unchanged
- t/File/Data.t                                                0.08    2003/07/26 revised 0.07
- t/File/Drivers/Driver.pm                                     0.02    2003/07/04 unchanged
- t/File/Drivers/Generate.pm                                   0.02    2003/07/04 unchanged
- t/File/Drivers/IO.pm                                         0.02    2003/07/04 unchanged
- tlib/File/Package.pm                                         1.1     2003/07/26 new
- tlib/File/SmartNL.pm                                         1.1     2003/07/26 unchanged
- tlib/Test/Tech.pm                                            1.1     2003/07/26 unchanged
+ lib/Docs/Site_SVD/File_Data.pm                               0.07    2004/04/09 revised 0.06
+ MANIFEST                                                     0.07    2004/04/09 generated, replaces 0.06
+ Makefile.PL                                                  0.07    2004/04/09 generated, replaces 0.06
+ README                                                       0.07    2004/04/09 generated, replaces 0.06
+ lib/File/Data.pm                                             1.12    2004/04/09 revised 1.11
+ t/File/Data.d                                                0.03    2004/04/09 revised 0.02
+ t/File/Data.pm                                               0.02    2004/04/09 revised 0.01
+ t/File/Data.t                                                0.09    2004/04/09 revised 0.08
+ t/File/_Drivers_/Driver.pm                                   0.02    2004/04/09 new
+ t/File/_Drivers_/Generate.pm                                 0.02    2004/04/09 new
+ t/File/_Drivers_/IO.pm                                       0.02    2004/04/09 new
+ t/File/File/Package.pm                                       1.14    2004/04/09 new
+ t/File/File/SmartNL.pm                                       1.13    2004/04/09 new
+ t/File/Test/Tech.pm                                          1.17    2004/04/09 new
+ t/File/Data/Secs2.pm                                         1.15    2004/04/09 new
 
 
 =head2 3.3 Changes
@@ -291,7 +295,7 @@ t/Test/TestUtil/TestUtil....NOK 18# Test 18 got: '$VAR1 = '\\=head1 Title Page
   File::Data - Access the __DATA__ section of a program module
 
 
- Revision: E
+ Revision: F
 
 [snip]
 
@@ -441,6 +445,17 @@ the installtion.
 
 Regenerated the test script and added "File::Package" to tlib.
 
+=item File-Data-0.07
+
+The lastest build of Test::STDmaker expects the test library in the same
+directory as the test script.
+Coordiated with the lastest Test::STDmaker by moving the
+test library from tlib to t/File, the same directory as the test script
+and deleting the test library File::TestPath program module.
+
+Changed from the obsolete C<File::PM2File> program module to 
+the C<File::Where> program module.
+
 =back
 
 =head2 3.4 Adaptation data.
@@ -465,23 +480,41 @@ and installation support are as follows:
 
 =item Installation Instructions.
 
-To installed the release file, use the CPAN module in the Perl release
+To installed the release file, use the CPAN module
+pr PPM module in the Perl release
 or the INSTALL.PL script at the following web site:
 
  http://packages.SoftwareDiamonds.com
 
 Follow the instructions for the the chosen installation software.
 
-The distribution file is at the following respositories:
+If all else fails, the file may be manually installed.
+Enter one of the following repositories in a web browser:
 
-   http://www.softwarediamonds/packages/File-Data-0.06
-   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.06
+  http://www.softwarediamonds/packages/
+  http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
 
+Right click on 'File-Data-0.07.tar.gz' and download to a temporary
+installation directory.
+Enter the following where $make is 'nmake' for microsoft
+windows; otherwise 'make'.
+
+ gunzip File-Data-0.07.tar.gz
+ tar -xf File-Data-0.07.tar
+ perl Makefile.PL
+ $make test
+ $make install
+
+On Microsoft operating system, nmake, tar, and gunzip 
+must be in the exeuction path. If tar and gunzip are
+not install, download and install unxutils from
+
+ http://packages.softwarediamonds.com
 
 =item Prerequistes.
 
  'File::SmartNL' => '1.1',
- 'File::PM2File' => '1.1',
+ 'File::Where' => '0.03',
 
 
 =item Security, privacy, or safety precautions.
@@ -563,7 +596,13 @@ Plain Old Documentation
 
 =head1 2.0 SEE ALSO
 
-L<File::Data|File::Data>
+=over 4
+
+=item L<File::Data|File::Data> 
+
+=item L<Docs::US_DOD::SVD|Docs::US_DOD::SVD> 
+
+=back
 
 =for html
 <hr>
@@ -590,11 +629,11 @@ __DATA__
 DISTNAME: File-Data^
 REPOSITORY_DIR: packages^
 
-VERSION : 0.06^
+VERSION : 0.07^
 FREEZE: 1^
 PREVIOUS_DISTNAME:  ^
-PREVIOUS_RELEASE: 0.05^
-REVISION: E^
+PREVIOUS_RELEASE: 0.06^
+REVISION: F^
 
 AUTHOR  : SoftwareDiamonds.com E<lt>support@SoftwareDiamonds.comE<gt>^
 
@@ -624,20 +663,21 @@ CHANGE2CURRENT:  ^
 AUTO_REVISE: 
 lib/File/Data.pm
 t/File/Data.*
-t/File/Drivers/*
-lib/File/Package.pm => tlib/File/Package.pm
-lib/File/SmartNL.pm => tlib/File/SmartNL.pm
-lib/Test/Tech.pm => tlib/Test/Tech.pm
+t/File/_Drivers_/*
+lib/File/Package.pm => t/File/File/Package.pm
+lib/File/SmartNL.pm => t/File/File/SmartNL.pm
+lib/Test/Tech.pm => t/File/Test/Tech.pm
+lib/Data/Secs2.pm => t/File/Data/Secs2.pm
 ^
 
 PREREQ_PM:
 'File::SmartNL' => '1.1',
-'File::PM2File' => '1.1',
+'File::Where' => '0.03',
 ^
-
+README_PODS: lib/File/Data.pm^
 TESTS: t/File/Data.t^
-
 EXE_FILES:  ^
+
 CHANGES:
 Changes are as follows: 
 
@@ -882,6 +922,17 @@ the installtion.
 
 Regenerated the test script and added "File::Package" to tlib.
 
+\=item File-Data-0.07
+
+The lastest build of Test::STDmaker expects the test library in the same
+directory as the test script.
+Coordiated with the lastest Test::STDmaker by moving the
+test library from tlib to t/File, the same directory as the test script
+and deleting the test library File::TestPath program module.
+
+Changed from the obsolete C<File::PM2File> program module to 
+the C<File::Where> program module.
+
 \=back
 
 ^
@@ -983,19 +1034,39 @@ ANY WAY OUT OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 INSTALLATION:
-To installed the release file, use the CPAN module in the Perl release
+To installed the release file, use the CPAN module
+pr PPM module in the Perl release
 or the INSTALL.PL script at the following web site:
 
  http://packages.SoftwareDiamonds.com
 
 Follow the instructions for the the chosen installation software.
 
-The distribution file is at the following respositories:
+If all else fails, the file may be manually installed.
+Enter one of the following repositories in a web browser:
 
 ${REPOSITORY}
+
+Right click on '${DIST_FILE}' and download to a temporary
+installation directory.
+Enter the following where $make is 'nmake' for microsoft
+windows; otherwise 'make'.
+
+ gunzip ${BASE_DIST_FILE}.tar.${COMPRESS_SUFFIX}
+ tar -xf ${BASE_DIST_FILE}.tar
+ perl Makefile.PL
+ $make test
+ $make install
+
+On Microsoft operating system, nmake, tar, and gunzip 
+must be in the exeuction path. If tar and gunzip are
+not install, download and install unxutils from
+
+ http://packages.softwarediamonds.com
 ^
 
-SUPPORT: 603 882-0846 E<lt>support@SoftwareDiamonds.comE<gt>^
+SUPPORT: 603 882-0846 E<lt>support@SoftwareDiamonds.comE<gt>
+^
 
 NOTES:
 The following are useful acronyms:
@@ -1021,7 +1092,16 @@ Plain Old Documentation
 \=back
 ^
 
-SEE_ALSO: L<File::Data|File::Data> ^
+SEE_ALSO: 
+\=over 4
+
+\=item L<File::Data|File::Data> 
+
+\=item L<Docs::US_DOD::SVD|Docs::US_DOD::SVD> 
+
+\=back
+^
+
 
 HTML:
 <hr>
