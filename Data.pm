@@ -1,6 +1,6 @@
 # File::Data into cvs
 # Copyright 2000 2001 Richard Foley richard.foley@rfi.net
-# $Id: Data.pm,v 1.11 2002/02/20 15:15:45 richard Exp $
+# $Id: Data.pm,v 1.12 2002/04/09 14:26:50 richard Exp $
 #
 
 package File::Data;           
@@ -9,9 +9,10 @@ use Carp;
 use Data::Dumper;
 use Fcntl qw(:flock);
 use FileHandle;
+# use Tie::File; # <- todo
 # use File::stat;
 use vars qw(@ISA $VERSION $AUTOLOAD);
-$VERSION = do { my @r = (q$Revision: 1.11 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r }; 
+$VERSION = do { my @r = (q$Revision: 1.12 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r }; 
 $| = 1;
 
 =head1 NAME
@@ -535,7 +536,7 @@ placeholder - unsupported
 sub create {
 	my $self = shift;
 
-	$self->_error("unsupported call: create(@_)"); 
+	$self->_error("unsupported call: __FILE__(@_)"); 
 
 	return ();
 }
@@ -549,7 +550,7 @@ placeholder - unsupported
 sub delete {
 	my $self = shift;
 
-	$self->_error("unsupported call: delete(@_)"); 
+	$self->_error("unsupported call: __FILE__(@_)"); 
 
 	return ();
 }
@@ -1200,9 +1201,9 @@ sub _init {
 
 	$file  = $self->_mapfile($file  );
 	$perm  = $self->_mapperms($perm ) if $file;
-	$h_err = $self->_mapperrs($h_err) if $file;
+	$h_err = $self->_mapperrs($h_err) if $file; # if $perm
 
-	if ($file) {
+	if ($file) { # unless $h_err
 		$i_ok = $self->_check_access($file, $perm); 
 		if ($i_ok == 1) {
 			$file = $self->_var('filename', $file);
@@ -1282,13 +1283,16 @@ sub _open {
 	$self->_debug("using open($open)");
 
 	my $FH = FileHandle->new("$perm $file") || '';
+	my @file = ();
+	# my $FH = tie(@file, 'Tie::File', $file) or '';
 	if (!$FH) {
 		$self->_error("Can't get handle($FH) for file($file) with permissions($perm)! $!");
 	} else {
+		# $FH = $self->_fh(\@file);
 		$FH = $self->_fh($FH);
 		if ($FH) {
 			$i_ok++;
-			$i_ok = $self->_lock; # if $self->_writable;
+			$i_ok = $self->_lock(); # if $self->_writable; 
 		}
 		$self->_debug("FH($FH) => i_ok($i_ok)");
 	}
@@ -1313,12 +1317,14 @@ sub _lock {
 		my $file = $self->_var('filename');
 		# $DB::single=2; # rjsf
 		if ($self->_writable) {
+			# if ($FH->flock(LOCK_EX | LOCK_NB)) {
 			if (flock($FH, LOCK_EX | LOCK_NB)) {
 				$i_ok++;
 			} else {
 				$self->_error("Can't overlock file($file) handle($FH)!");
 			}
 		} else {
+			# if ($FH->flock(LOCK_SH | LOCK_NB)) {
 			if (flock($FH, LOCK_SH | LOCK_NB)) {
 				$i_ok++;
 			} else {
@@ -1334,7 +1340,7 @@ sub _lock {
 
 Unlock the file
 
-	my $i_ok = $o_dat->unlock;
+	my $i_ok = $o_dat->_unlock;
 
 =cut
 
@@ -1344,7 +1350,7 @@ sub _unlock {
 	my $i_ok = 0;
 
 	if ($FH) {
-		# if (flock($FH, LOCK_UN)) { apparently there's a race, perl does it better :) }
+		# if (flock($FH, LOCK_UN)) { apparently there's a race, perl does it better - see close :) }
 		$i_ok++;
 	} else {
 		my $file = $self->_var('filename');
@@ -1368,6 +1374,7 @@ sub _close {
 	my $i_ok = 0;
 
 	if ($FH) {
+		# $FH->untie;
 		if ($FH->close) { # perl unlocks it better than we can (race)
 			$i_ok++;
 		} else {
@@ -1410,7 +1417,7 @@ sub DESTROY {
 Richard Foley <C> richard.foley@rfi.net 2001
 
 For those that are interested, the docs and tests were (mostly) written
-before the code.
+before the code, which was helpful in keeping it tidy.
 
 =cut
 
