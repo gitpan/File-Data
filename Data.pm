@@ -1,6 +1,6 @@
 # File::Data into cvs
 # Copyright 2000 2001 Richard Foley richard.foley@rfi.net
-# $Id: Data.pm,v 1.10 2002/02/17 17:38:08 richard Exp $
+# $Id: Data.pm,v 1.11 2002/02/20 15:15:45 richard Exp $
 #
 
 package File::Data;           
@@ -11,7 +11,7 @@ use Fcntl qw(:flock);
 use FileHandle;
 # use File::stat;
 use vars qw(@ISA $VERSION $AUTOLOAD);
-$VERSION = do { my @r = (q$Revision: 1.10 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r }; 
+$VERSION = do { my @r = (q$Revision: 1.11 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r }; 
 $| = 1;
 
 =head1 NAME

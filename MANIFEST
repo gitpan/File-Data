@@ -7,5 +7,6 @@ TODO
 t/extra
 t/japh
 t/read
+t/perms
 t/test.t
 t/write
