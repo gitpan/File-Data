@@ -1,7 +1,9 @@
 # File::Data into cvs
 # Copyright 2000 2001 Richard Foley richard.foley@rfi.net
-# $Id: Data.pm,v 1.5 2001/12/03 21:50:27 richard Exp $
+# $Id: Data.pm,v 1.8 2002/01/15 09:13:38 richard Exp $
 #
+# TODO
+# default behaviour returns object - UC returns args!
 
 package File::Data;           
 use strict;
@@ -10,53 +12,66 @@ use Data::Dumper;
 use FileHandle;
 # use File::stat;
 use vars qw(@ISA $VERSION $AUTOLOAD);
-$VERSION = do { my @r = (q$Revision: 1.5 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r }; 
+$VERSION = do { my @r = (q$Revision: 1.8 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r }; 
 $| = 1;
 
 =head1 NAME
 
 File::Data - interface to file data 
 
-
 =head1 DESCRIPTION
 
 Wraps all the accessing of a file into a convenient set of calls for reading and writing data, including a simple regex interface.
+
+Note that the file needs to exist prior to using this module!  See L<new()>
 
 =head1 SYNOPSIS
 
 =over 4
 
-    use strict;
+	use strict;
 
 	use File::Data;
 
-	my $o_dat = File::Data->new('./jabber');
+	my $o_dat = File::Data->new('./t/example');
 
-	$o_dat->write("  Bewxre the Jabberwock my son,\n");
+	$o_dat->write("complete file contents\n");
 
-	$o_dat->prepend("The Jxbberwock by Lewis Cxrroll:\n");
+	$o_dat->prepend("first line\n"); # line 0
 
-	$o_dat->append("  the claws thxt snxtch,\n  ...\n");
+	$o_dat->append("original second line\n");
 
-	$o_dat->insert(2, "  the jaws which bite.\n");
+	$o_dat->insert(2, "new second line\n"); # inc. zero!
 
-	$o_dat->replace('x', 'a');
+	$o_dat->replace('line', 'LINE');
 
-	print $o_dat->SEARCH('The.+\n')->REPLACE("The.+\n", '')->return('search');
-
-	print $o_dat->read();
-
+	print $o_dat->READ;
 
 Or, perhaps more seriously :-}
 
 	my $o_sgm = File::Data->new('./sgmlfile');
 
-	print "new SGML data: ".$o_sgm->replace(
+	print "new SGML data: ".$o_sgm->REPLACE(
 		'\<\s*((?i)tag)\s*\>\s*((?s).*)\s*\<\s*((?i)\s*\/\s*tag)\s*\>', 
 		qq|<tag>key="val"</tag>|,		
 	) if $o_sgm;
 
 See L<METHODS> and L<EXAMPLES>.
+
+=head1 IMPORTANT
+
+lowercase method calls B<all> return the object itself, so you can chain calls.
+
+	my $o_obj = $o_dat->read; # ! object !
+
+UPPERCASE method calls B<all> return the data relevant to the operation.
+
+	my @data  = $o_dat->READ; # ! data   !
+
+While this may occasionally be frustrating, it is at least consistent, and 
+using the B<principle of least surprise> should be comforting to most people.
+
+See L<do>
 
 =head1 EXPLANATION
 
@@ -66,15 +81,15 @@ The idea is to standardise accessing of files for repetitive and straight forwar
 
 Approaches to opening and working with files vary so much, where one person may wish to know if a file exists, another wishes to know whether the target is a file, or if it is readable, or writable and so on.  Sometimes, in production code even (horror), file's are opened without any checks of whether the open was succesful.  Then there's a loop through each line to find the first or many patterns to read and/or replace.  With a failure, normally the only message is 'permission denied', is that read or write access, does the file even exist? etc.
 
-This module attempts to provide a plain/generic interface to accessing a file's data.  This will not suit every situation, but I have included some examples which will hopefully demonstrate that it may be used in situations where people would normally go through the same procedure for the umpteenth time to get at the same data.  
+This module attempts to provide a plain/generic interface to accessing a file's data.  This will not suit every situation, but I have included some examples which will hopefully demonstrate that it may be used in situations where people would normally go through varying and inconsistent, (and therefore error-prone),  procedures - to get at the same data.  
 
 Theoretically you can mix and match your read and writes so long as you don't open read-only. 
 
-	my $o_dat    = File::Data->new($file);
+	my $o_dat  = File::Data->new($file);
 
-	my @partial  = $o_dat->search($pattern);
+	my $i_snrd = $o_dat->append($append)->REPLACE($search, $replace);
 
-	my $i_cnt    = $o_dat->replace($search, $replace);
+	print $o_dat->READ;
 
 One last thing - I'm sure this could be made much more efficient, and I'll be very interested to try and incorporate any suggestions to that effect.  Note though that the intention has been to create a simple moderately consistent interface, rather than a complicated one.  Sometimes it's better to roll your own, and sometimes you don't have to reinvent the wheel - TMTOWTDI.
 
@@ -82,9 +97,10 @@ One last thing - I'm sure this could be made much more efficient, and I'll be ve
 
 =cut
 
+# Methods we like:
 # ================================================================
-
-my @_METHODS = qw(APPEND INSERT PREPEND READ REPLACE SEARCH WRITE);
+# 
+my @_METHODS = qw(append insert prepend read replace search write);
 my $_METHODS = join('|', @_METHODS);
 
 =head1 METHODS
@@ -99,10 +115,15 @@ Create a new File::Data object (default read-write).
 
 	my $o_ro = File::Data->new($filename, 'ro'); # read-only
 
+Each file should have it's own discrete object.
+
 Note that if you open a file read-only and then attempt to write to it, that 
 will be regarded as an error, even if you change the permissions in the meantime.
 
-Each file should have it's own discrete object.
+Further: The file B<must> exist before succesful use of this method is possible.  
+This is B<not> a replacement for modules which create and delete files, 
+this is purely designed as an interface to the B<data> of existing files.  
+A B<create> function is a future possibility.
 
 Look in L<EXAMPLES> for a more complete explanation of possible arguments to the B<new()> method
 
@@ -134,11 +155,13 @@ sub new {
 
 Read all data from file
 
-	my @data = $o_dat->read;
+	$o_dat = $o_dat->read; # !
+
+	my @data = $o_dat->READ;
 
 =cut
 
-sub read {
+sub READ {
 	my $self = shift;
 
 	$self->_enter('read');
@@ -163,16 +186,17 @@ sub _read { #
 	return ($File::Data::REFERENCE) ? \@ret : @ret;
 };
 
-
 =item write
 
 Write data to file
+
+	my $o_dat = $o_dat->WRITE; # !
 
 	my @written = $o_dat->write;
 
 =cut
 
-sub write {
+sub WRITE {
 	my $self = shift;
 	my @args = @_;
 	my @ret  = ();
@@ -212,11 +236,13 @@ sub _write { #
 
 Prepend to file
 
+	my $o_dat = $o_dat->prepen(\@lines); # !
+
 	my @prepended = $o_dat->prepend(\@lines);
 
 =cut
 
-sub prepend {
+sub PREPEND {
 	my $self = shift;
 	my @ret  = ();
 
@@ -242,11 +268,13 @@ sub prepend {
 
 Insert data at line number, starting from '0'
 
-	my @inserted = $o_dat->insert($i_lineno, \@lines);
+	my $o_dat = $o_dat->insert($i_lineno, \@lines); # !
+
+	my @inserted = $o_dat->INSERT($i_lineno, \@lines);
 
 =cut
 
-sub insert {
+sub INSERT {
 	my $self = shift;
 	my $line = shift;
 	my @ret  = ();
@@ -272,9 +300,15 @@ sub insert {
 					push(@post, $_);
 				}	
 			}
-			$FH->truncate(0);
-			$FH->seek(0, 0);
-			@ret = @_ if $self->_write(@pre, @_, @post);
+			$i_cnt++;
+			if (!($i_cnt >= $line)) {
+				my $s = ($i_cnt == 1) ? '' : 's';
+				$self->_error("couldn't insert($line, ...) while only $i_cnt line$s in file");	
+			} else {
+				$FH->truncate(0);
+				$FH->seek(0, 0);
+				@ret = @_ if $self->_write(@pre, @_, @post);
+			}
 		}
 	}
 
@@ -288,11 +322,13 @@ sub insert {
 
 Append to file
 
-	my @appended = $o_dat->append(\@lines);
+	my $o_dat = $o_dat->append(\@lines); # !
+
+	my @appended = $o_dat->APPEND(\@lines);
 
 =cut
 
-sub append {
+sub APPEND {
 	my $self = shift;
 	my @ret  = ();
 
@@ -317,13 +353,15 @@ Retrieve data out of a file, simple list of all matches found are returned.
 
 Note - you must use capturing parentheses for this to work!
 
-my @addrs = $o_dat->search('/^(.*\@.*)$/');
+	my $o_dat = $o_dat->search('/^(.*\@.*)$/'); # !
 
-my @names = $o_dat->search('/^(?:[^:]:){4}([^:]+):/');
+	my @addrs = $o_dat->SEARCH('/^(.*\@.*)$/');
+
+	my @names = $o_dat->SEARCH('/^(?:[^:]:){4}([^:]+):/');
 
 =cut
 
-sub search {
+sub SEARCH {
 	my $self   = shift;
 	my $search = shift; 
 	my @ret    = ();
@@ -367,9 +405,11 @@ sub search {
 
 Replace data in a 'search and replace' manner, returns the final data.
 
-	my @data = $o_dat->replace($search, $replace);
+	my $o_dat = $o_dat->replace($search, $replace); # !
 
-	my @data = $o_dat->replace(
+	my @data = $o_dat->REPLACE($search, $replace);
+
+	my @data = $o_dat->REPLACE(
 		q|\<a href=(['"])([^$1]+)?$1| => q|'my.sales.com'|,
 	);
 
@@ -381,7 +421,7 @@ If you really need this, perhaps B<(?{})> can help?
 
 =cut
 
-sub replace {
+sub REPLACE {
 	my $self = shift;
 	my %args = @_;
 	my @ret  = ();
@@ -434,61 +474,21 @@ sub replace {
 	return ($File::Data::REFERENCE) ? \@ret : @ret;
 }
 
-
-=item do
-
-Simple wrapper for method calls, returning the object, so that you can chain them.  
-
-    my $o_dat = $o_dat->do('insert', @insertargs)->do(\'append', @appendargs)->do('read');
-
-An addendum to this method, and to make life generally easier, is that you can 
-also call any of the above methods in uppercase, to call via B<do()> eg;
-
-    my @data = $o_dat->WRITE($this)->APPEND->($that)->read;
-
-First argument is the method to call, followed by the arguments that method expects.
-
-    perl -MFile::Data -e "print File::Data->new($file)->INSERT(3, \"third line\n\")->read";
-
-If you want to get at the output of a particular called method see L<return()>
-
-=cut
-
-sub do {
-	my $self = shift;
-	my $call = shift;
-	
-	$self->_enter('do');
-	$self->_debug('in: '.Dumper([$call, @_])) if $File::Data::DEBUG;
-
-	if ($call !~ /^($_METHODS)$/i) {
-		$self->_error("unsupported method($call)");
-	} else {
-		$call = lc($call);
-		$self->_var($call => []);
-		my @res = $self->$call(@_);
-		$self->_var($call => (ref($res[0]) ? $res[0] : \@res));
-	}
-
-	$self->_debug('out: $self') if $File::Data::DEBUG;
-	$self->_leave('do');
-
-	return $self;
-}
-
 =item return
 
 Returns the product of the given (or last) B<do()>, undef on failure.
 
-    my @prepended = $o_dat->PREPEND($a)->APPEND($b)->return('prepend');
+    my $o_dat = $o_dat->prepend($A)->append($b)->return('prepend'); # !
 
-    my @appended  = $o_dat->PREPEND($a)->APPEND($b)->return; # like read()
+    my @prepended = $o_dat->prepend($A)->append($b)->RETURN('prepend');
+
+    my @appended  = $o_dat->prepend($A)->append($b)->RETURN; # like read()
 
 =cut
 
-sub return {
+sub RETURN {
 	my $self = shift;
-	my $call = lc(shift) || $self->_var('last');
+	my $call = uc(shift) || $self->_var('last');
 
 	if ((defined($self->{'_var'}{$call}) && 
 		     ref($self->{'_var'}{$call}) eq 'ARRAY'
@@ -533,7 +533,6 @@ sub delete {
 placeholder - unsupported
 
 =cut
-
 
 # Returns File::stat object for the file.
 
@@ -636,7 +635,7 @@ Set to something other than zero if you don't want error messages ?-\
 
 =cut
 
-$File::Data::SILENT ||= $ENV{'File_Data_SILENT'} || 1;
+$File::Data::SILENT ||= $ENV{'File_Data_SILENT'} || 0;
 
 
 =item $File::Data::STRING
@@ -691,14 +690,15 @@ consideration, behaviour is then effectively 'o_dat ISA FileHandle'.
 
 sub AUTOLOAD {
     my $self = shift;
-    return if $AUTOLOAD =~ /::DESTROY$/;    # protection
+    return if $AUTOLOAD =~ /::DESTROY$/o;    # protection
 
     my $meth = $AUTOLOAD;
 	$meth =~ s/.+::([^:]+)$/$1/;
  
-    if ($meth =~ /^($_METHODS)$/i) { 		# convenience
+    if ($meth =~ /^($_METHODS)$/io) { 		# convenience
 		$self->_debug("rerouting: $meth(@_)");
-        return $self->do(lc($meth), @_); 
+        return $self->do(uc($meth), @_); 
+        # return $self->do(lc($meth), @_); 
     } else { 								# or fallback
 		my $FH = $self->_fh;
 		return $FH->$meth(@_);
@@ -720,6 +720,24 @@ Typical construction examples:
 	my $o_ro = File::Data->new($filename, 'ro');
 
 =over 4
+
+=item complete
+
+	my $o_dat = File::Data->new('./jabber');
+
+	$o_dat->write("  Bewxre the Jabberwock my son,\n");
+
+	$o_dat->prepend("The Jxbberwock by Lewis Cxrroll:\n");
+
+	$o_dat->append("  the claws thxt snxtch,\n  ...\n");
+
+	$o_dat->insert(2, "  the jaws which bite.\n");
+
+	$o_dat->replace('x', 'a');
+
+	print $o_dat->SEARCH('The.+\n')->REPLACE("The.+\n", '')->return('search');
+
+	print $o_dat->READ;
 
 =item error
 
@@ -754,12 +772,14 @@ From the command line:
 And (very non-obfuscated)
 
   C<
-  perl -MFile::Data -e "@x=sort qw(perl another hacker just); print   \
-    map {split(\"\n\", ucfirst(\$_).' ')} File::Data->new('./japh')-> \ 
-    WRITE(shift(@x).\"\n\")->     \
-    APPEND(shift(@x).\"\n\")->    \
-    PREPEND(shift(@x).\"\n\")->   \
-    INSERT(2, shift(@x).\"\n\")->read"
+  perl -MFile::Data -e "@x=sort qw(perl another hacker just);
+    print map {split(\"\n\", ucfirst(\$_).\" \")}\
+    File::Data->new(\"./t/japh\")->\
+      write(shift(@x).\"\n\")->    \
+      append(shift(@x).\"\n\")->   \
+      prepend(shift(@x).\"\n\")->  \
+      insert(2, shift(@x).\"\n\")->\
+    READ;" 
   >
 
 If you still have problems, mail me the output of 
@@ -802,7 +822,7 @@ sub _var {
 	my $ret  = '';
 	
 	# if (!(grep(/^_$key$/, keys %{$self{'_var'}}))) {
-	if ($key !~ /^($_VARS)$/) {
+	if ($key !~ /^($_VARS)$/io) {
 		$self->_error("No such key($key) val($val)!");
 	} else {
 		if (defined($val)) {
@@ -830,8 +850,8 @@ sub _debug {
 	my $state = $self->{'_var'}{'state'}; # ahem
 	my $debug = $File::Data::DEBUG;
 
-	if (($debug =~ /^(\d+)$/ && $1 >= 1) ||
-	     $debug =~ /^(.+)$/ && $state =~ /$debug/
+	if (($debug =~ /^(\d+)$/o && $1 >= 1) ||
+	     $debug =~ /^(.+)$/o && $state =~ /$debug/
 	) {
 		print ("$state: ", @_, "\n");
 	}
@@ -939,15 +959,15 @@ sub _mapfile {
 	my $self = shift;
 	my $file = shift || '';
 
-	$file =~ s/^\s*//;
-	$file =~ s/\s*$//;
+	$file =~ s/^\s*//o;
+	$file =~ s/\s*$//o;
 
-	unless ($file =~ /\w+/) {
+	unless ($file =~ /\w+/o) {
 		$file = '';
 		$self->_error("inappropriate filename($file)"); 
 	} else {
 		my $xfile = $self->_var('filename') || '';
-		if ($xfile =~ /.+/) {
+		if ($xfile =~ /.+/o) {
 			$file = '';
 			$self->_error("can't reuse ".ref($self)." object($xfile) for another file($file)"); 
 		}
@@ -968,8 +988,8 @@ sub _mapperms {
 	my $self = shift;
 	my $args = shift || '';
 
-	$args =~ s/^\s*//;
-	$args =~ s/\s*$//;
+	$args =~ s/^\s*//o;
+	$args =~ s/\s*$//o;
 
 	my %map = ( # we only recognise
 		'ro'		=> '<',
@@ -980,7 +1000,7 @@ sub _mapperms {
 	my $ret = $map{$args} || $args;
 
 	$self->_error("Inappropriate permissions($args) - use this: ".Dumper(\%map))
-		unless $ret =~ /.+/;
+		unless $ret =~ /.+/o;
 
 	return $ret;
 }
@@ -1146,7 +1166,7 @@ sub _check_access {
 	my $perm = shift;
 	my $i_ok = 0;
 
-	if (!($file =~ /.+/ && $perm =~ /.+/)) {
+	if (!($file =~ /.+/o && $perm =~ /.+/o)) {
 		$self->_error("no filename($file) or permissions($perm) given!");
 	} else {
 		stat($file);
@@ -1161,7 +1181,7 @@ sub _check_access {
 					$self->_error("file($file) cannot be read!");
 				} else {
 					$self->_debug("existing file can be read") if $File::Data::DEBUG;
-					if ($perm =~ /^<$/) {
+					if ($perm =~ /^<$/o) {
 						$i_ok++;
 					} else {
 						if (! -w $file) {
@@ -1324,4 +1344,56 @@ For those that are interested, the docs and tests were (mostly) written before t
 =cut
 
 1;
+
+=item do
+
+Simple wrapper for method calls, returning the content.
+
+    my @inserted = $o_dat->do('insert', @this);
+
+    my @appended = $o_dat->do('append', @this);
+
+An addendum to this method, and to make life generally easier, is that you can 
+also call any of the above methods in uppercase, to call via B<do()> eg;
+
+    my @data = $o_dat->WRITE($this)->APPEND->($that)->read;
+
+First argument is the method to call, followed by the arguments that method expects.
+
+    perl -MFile::Data -e "print File::Data->new($file)->INSERT(3, \"third line\n\")->READ";
+
+If you want to get at the output of a particular called method see L<return()>
+
+=cut
+
+sub DO {
+	my $self = shift;
+	my $call = shift;
+	my @res  = ();
+	
+	$self->_enter('do');
+	$self->_debug('in: '.Dumper([$call, @_])) if $File::Data::DEBUG;
+
+	if ($call !~ /^($_METHODS)$/io) {
+		$self->_error("unsupported method($call)");
+	} else {
+		$call = uc($call);
+		$self->_var($call => []);
+		my @res = $self->$call(@_);
+		$self->_var($call => (ref($res[0]) ? $res[0] : \@res));
+	}
+
+	$self->_debug('out: $self') if $File::Data::DEBUG;
+	$self->_leave('do');
+
+	return @res;
+}
+
+sub do {
+	my $self = shift;
+	
+	$self->DO(@_);
+
+	return $self;
+}
 
