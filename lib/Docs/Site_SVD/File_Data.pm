@@ -10,23 +10,26 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE );
-$VERSION = '0.04';
-$DATE = '2003/07/15';
+$VERSION = '0.06';
+$DATE = '2003/07/26';
 $FILE = __FILE__;
 
 use vars qw(%INVENTORY);
 %INVENTORY = (
-    'lib/Docs/Site_SVD/File_Data.pm' => [qw(0.04 2003/07/15), 'revised 0.03'],
-    'MANIFEST' => [qw(0.04 2003/07/15), 'generated, replaces 0.03'],
-    'Makefile.PL' => [qw(0.04 2003/07/15), 'generated, replaces 0.03'],
-    'README' => [qw(0.04 2003/07/15), 'generated, replaces 0.03'],
-    'lib/File/Data.pm' => [qw(0.03 2003/07/15), 'revised 0.02'],
-    't/File/Data.d' => [qw(0.01 2003/07/07), 'unchanged'],
+    'lib/Docs/Site_SVD/File_Data.pm' => [qw(0.06 2003/07/26), 'revised 0.05'],
+    'MANIFEST' => [qw(0.06 2003/07/26), 'generated, replaces 0.05'],
+    'Makefile.PL' => [qw(0.06 2003/07/26), 'generated, replaces 0.05'],
+    'README' => [qw(0.06 2003/07/26), 'generated, replaces 0.05'],
+    'lib/File/Data.pm' => [qw(1.11 2003/07/26), 'unchanged'],
+    't/File/Data.d' => [qw(0.01 2003/07/26), 'unchanged'],
     't/File/Data.pm' => [qw(0.01 2003/06/07), 'unchanged'],
-    't/File/Data.t' => [qw(0.01 2003/07/07), 'unchanged'],
+    't/File/Data.t' => [qw(0.08 2003/07/26), 'revised 0.07'],
     't/File/Drivers/Driver.pm' => [qw(0.02 2003/07/04), 'unchanged'],
     't/File/Drivers/Generate.pm' => [qw(0.02 2003/07/04), 'unchanged'],
     't/File/Drivers/IO.pm' => [qw(0.02 2003/07/04), 'unchanged'],
+    'tlib/File/Package.pm' => [qw(1.1 2003/07/26), 'new'],
+    'tlib/File/SmartNL.pm' => [qw(1.1 2003/07/26), 'unchanged'],
+    'tlib/Test/Tech.pm' => [qw(1.1 2003/07/26), 'unchanged'],
 
 );
 
@@ -53,11 +56,11 @@ use vars qw(%INVENTORY);
 
   File::Data - Access the __DATA__ section of a program module
 
- Revision: C
+ Revision: E
 
- Version: 0.04
+ Version: 0.06
 
- Date: 2003/07/15
+ Date: 2003/07/26
 
  Prepared for: General Public 
 
@@ -92,7 +95,7 @@ module.
 
 =head2 1.3 Document overview.
 
-This document releases File::Data version 0.04
+This document releases File::Data version 0.06
 providing a description of the inventory, installation
 instructions and other information necessary to
 utilize and track this release.
@@ -108,8 +111,8 @@ system file specification.
 This document releases the file found
 at the following repository(s):
 
-   http://www.softwarediamonds/packages/File-Data-0.04
-   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.04
+   http://www.softwarediamonds/packages/File-Data-0.06
+   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.06
 
 
 Restrictions regarding duplication and license provisions
@@ -177,17 +180,20 @@ consists of the following files:
 
  file                                                         version date       comment
  ------------------------------------------------------------ ------- ---------- ------------------------
- lib/Docs/Site_SVD/File_Data.pm                               0.04    2003/07/15 revised 0.03
- MANIFEST                                                     0.04    2003/07/15 generated, replaces 0.03
- Makefile.PL                                                  0.04    2003/07/15 generated, replaces 0.03
- README                                                       0.04    2003/07/15 generated, replaces 0.03
- lib/File/Data.pm                                             0.03    2003/07/15 revised 0.02
- t/File/Data.d                                                0.01    2003/07/07 unchanged
+ lib/Docs/Site_SVD/File_Data.pm                               0.06    2003/07/26 revised 0.05
+ MANIFEST                                                     0.06    2003/07/26 generated, replaces 0.05
+ Makefile.PL                                                  0.06    2003/07/26 generated, replaces 0.05
+ README                                                       0.06    2003/07/26 generated, replaces 0.05
+ lib/File/Data.pm                                             1.11    2003/07/26 unchanged
+ t/File/Data.d                                                0.01    2003/07/26 unchanged
  t/File/Data.pm                                               0.01    2003/06/07 unchanged
- t/File/Data.t                                                0.01    2003/07/07 unchanged
+ t/File/Data.t                                                0.08    2003/07/26 revised 0.07
  t/File/Drivers/Driver.pm                                     0.02    2003/07/04 unchanged
  t/File/Drivers/Generate.pm                                   0.02    2003/07/04 unchanged
  t/File/Drivers/IO.pm                                         0.02    2003/07/04 unchanged
+ tlib/File/Package.pm                                         1.1     2003/07/26 new
+ tlib/File/SmartNL.pm                                         1.1     2003/07/26 unchanged
+ tlib/Test/Tech.pm                                            1.1     2003/07/26 unchanged
 
 
 =head2 3.3 Changes
@@ -196,11 +202,11 @@ Changes are as follows:
 
 =over 4
 
-=item Test::TestUtil 0.01
+=item Test-TestUtil-0.01
 
 Originated
 
-=item Test::TestUtil 0.02
+=item Test-TestUtil-0.02
 
 Correct failure from Josts Smokehouse" <Jost.Krieger+smokeback@ruhr-uni-bochum.de>
 test run
@@ -225,7 +231,7 @@ that changes file specifications from one operating system
 to another operating system.
 This method has been in service unchanged for some time.
 
-=item Test::TestUtil 0.03
+=item Test-TestUtil-0.03
 
 Correct failure from Josts Smokehouse" <Jost.Krieger+smokeback@ruhr-uni-bochum.de>
 test run
@@ -255,7 +261,7 @@ test script for this
 feature, and added a discusssion of this feature in
 POD discription for I<format_hash_table>
 
-=item Test::TestUtil 0.04
+=item Test-TestUtil-0.04
 
 item our old friend visits again - DOS and UNIX text file incompatibility
 
@@ -285,7 +291,7 @@ t/Test/TestUtil/TestUtil....NOK 18# Test 18 got: '$VAR1 = '\\=head1 Title Page
   File::Data - Access the __DATA__ section of a program module
 
 
- Revision: C
+ Revision: E
 
 [snip]
 
@@ -320,7 +326,7 @@ instead of using the raw file handle.
 The I<fin> method takes any \015\012 combination and changes it into the 
 logical Perl new line, I<"\n">, for the current operating system.
 
-=item File::FileUtil 0.01
+=item File-FileUtil-0.01
 
 =over 4
 
@@ -375,11 +381,11 @@ failure from CPAN testing whose is running on a different platform.
 
 =back
 
-=item File::FileUtil 0.02
+=item File-FileUtil-0.02
 
 Added the method I<hex_dump>.
 
-=item File::FileUtil 0.03
+=item File-FileUtil-0.03
 
 =over 4
 
@@ -398,7 +404,7 @@ the directories in @INC
 
 =back
 
-=item File::Data 0.01
+=item File-Data-0.01
 
 Removed the methods for converting a
 program module specification to its
@@ -408,15 +414,32 @@ absolute file from the
 The module name is now more descriptive
 of the routines in the module.
 
-=item File::Data 0.02
+=item File-Data-0.02
 
 Changed prerequisite from "Test::STD::Scrub" to "Text::Scrub".
 This was a change to make the name more descriptive of the contents
 of the program module.
 
-=item File::Data 0.03
+=item File-Data-0.03
 
 Recoded using gensym to make sure file handle is a reference to a GLOB
+
+=item File-Data-0.04
+
+=item File-Data-0.05
+
+Change the test so that test support program modules resides in distribution
+directory tlib directory instead of the lib directory. 
+Because they are no longer in the lib directory, 
+test support files will not be installed as a pre-condition for the 
+test of this module.
+The test of this module will precede immediately.
+The test support files in the tlib directory will vanish after
+the installtion.
+
+=item File-Data-0.06
+
+Regenerated the test script and added "File::Package" to tlib.
 
 =back
 
@@ -424,15 +447,6 @@ Recoded using gensym to make sure file handle is a reference to a GLOB
 
 This installation requires that the installation site
 has the Perl programming language installed.
-Installation sites running Microsoft Operating systems require
-the installation of Unix utilities. 
-An excellent, highly recommended Unix utilities for Microsoft
-operating systems is unxutils by Karl M. Syring.
-A copy is available at the following web sites:
-
- http://unxutils.sourceforge.net
- http://packages.SoftwareDiamnds.com
-
 There are no other additional requirements or tailoring needed of 
 configurations files, adaptation data or other software needed for this
 installation particular to any installation site.
@@ -460,18 +474,14 @@ Follow the instructions for the the chosen installation software.
 
 The distribution file is at the following respositories:
 
-   http://www.softwarediamonds/packages/File-Data-0.04
-   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.04
+   http://www.softwarediamonds/packages/File-Data-0.06
+   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.06
 
 
 =item Prerequistes.
 
- 'File::SmartNL' => '0',
- 'File::Package' => '0',
- 'File::TestPath' => '0',
- 'Text::Scrub' => '0',
- 'File::PM2File' => '0',
- 'Test::Tech' => '1.08',
+ 'File::SmartNL' => '1.1',
+ 'File::PM2File' => '1.1',
 
 
 =item Security, privacy, or safety precautions.
@@ -580,11 +590,11 @@ __DATA__
 DISTNAME: File-Data^
 REPOSITORY_DIR: packages^
 
-VERSION : 0.04^
+VERSION : 0.06^
 FREEZE: 1^
 PREVIOUS_DISTNAME:  ^
-PREVIOUS_RELEASE: 0.03^
-REVISION: C^
+PREVIOUS_RELEASE: 0.05^
+REVISION: E^
 
 AUTHOR  : SoftwareDiamonds.com E<lt>support@SoftwareDiamonds.comE<gt>^
 
@@ -615,15 +625,14 @@ AUTO_REVISE:
 lib/File/Data.pm
 t/File/Data.*
 t/File/Drivers/*
+lib/File/Package.pm => tlib/File/Package.pm
+lib/File/SmartNL.pm => tlib/File/SmartNL.pm
+lib/Test/Tech.pm => tlib/Test/Tech.pm
 ^
 
 PREREQ_PM:
-'File::SmartNL' => '0',
-'File::Package' => '0',
-'File::TestPath' => '0',
-'Text::Scrub' => '0',
-'File::PM2File' => '0',
-'Test::Tech' => '1.08',
+'File::SmartNL' => '1.1',
+'File::PM2File' => '1.1',
 ^
 
 TESTS: t/File/Data.t^
@@ -634,11 +643,11 @@ Changes are as follows:
 
 \=over 4
 
-\=item Test::TestUtil 0.01
+\=item Test-TestUtil-0.01
 
 Originated
 
-\=item Test::TestUtil 0.02
+\=item Test-TestUtil-0.02
 
 Correct failure from Josts Smokehouse" <Jost.Krieger+smokeback@ruhr-uni-bochum.de>
 test run
@@ -663,7 +672,7 @@ that changes file specifications from one operating system
 to another operating system.
 This method has been in service unchanged for some time.
 
-\=item Test::TestUtil 0.03
+\=item Test-TestUtil-0.03
 
 Correct failure from Josts Smokehouse" <Jost.Krieger+smokeback@ruhr-uni-bochum.de>
 test run
@@ -693,7 +702,7 @@ test script for this
 feature, and added a discusssion of this feature in
 POD discription for I<format_hash_table>
 
-\=item Test::TestUtil 0.04
+\=item Test-TestUtil-0.04
 
 item our old friend visits again - DOS and UNIX text file incompatibility
 
@@ -758,7 +767,7 @@ instead of using the raw file handle.
 The I<fin> method takes any \015\012 combination and changes it into the 
 logical Perl new line, I<"\n">, for the current operating system.
 
-\=item File::FileUtil 0.01
+\=item File-FileUtil-0.01
 
 \=over 4
 
@@ -813,11 +822,11 @@ failure from CPAN testing whose is running on a different platform.
 
 \=back
 
-\=item File::FileUtil 0.02
+\=item File-FileUtil-0.02
 
 Added the method I<hex_dump>.
 
-\=item File::FileUtil 0.03
+\=item File-FileUtil-0.03
 
 \=over 4
 
@@ -836,7 +845,7 @@ the directories in @INC
 
 \=back
 
-\=item File::Data 0.01
+\=item File-Data-0.01
 
 Removed the methods for converting a
 program module specification to its
@@ -846,15 +855,32 @@ absolute file from the
 The module name is now more descriptive
 of the routines in the module.
 
-\=item File::Data 0.02
+\=item File-Data-0.02
 
 Changed prerequisite from "Test::STD::Scrub" to "Text::Scrub".
 This was a change to make the name more descriptive of the contents
 of the program module.
 
-\=item File::Data 0.03
+\=item File-Data-0.03
 
 Recoded using gensym to make sure file handle is a reference to a GLOB
+
+\=item File-Data-0.04
+
+\=item File-Data-0.05
+
+Change the test so that test support program modules resides in distribution
+directory tlib directory instead of the lib directory. 
+Because they are no longer in the lib directory, 
+test support files will not be installed as a pre-condition for the 
+test of this module.
+The test of this module will precede immediately.
+The test support files in the tlib directory will vanish after
+the installtion.
+
+\=item File-Data-0.06
+
+Regenerated the test script and added "File::Package" to tlib.
 
 \=back
 
@@ -995,11 +1021,7 @@ Plain Old Documentation
 \=back
 ^
 
-SEE_ALSO: 
-
-L<File::Data|File::Data>
-
-^
+SEE_ALSO: L<File::Data|File::Data> ^
 
 HTML:
 <hr>

@@ -23,16 +23,12 @@ my $tests = join ' ',unix2os('t/File/Data.t');
 WriteMakefile(
     NAME => 'File::Data',
     DISTNAME => 'File-Data',
-    VERSION  => '0.04',
+    VERSION  => '0.06',
     dist     => {COMPRESS => 'gzip',
                 'gz' => 'gz'},
     test     => {TESTS => $tests},
-    PREREQ_PM => {'File::SmartNL' => '0',
-                  'File::Package' => '0',
-                  'File::TestPath' => '0',
-                  'Text::Scrub' => '0',
-                  'File::PM2File' => '0',
-                  'Test::Tech' => '1.08',},
+    PREREQ_PM => {'File::SmartNL' => '1.1',
+                  'File::PM2File' => '1.1',},
     
 
     ($] >= 5.005 ?     

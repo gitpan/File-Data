@@ -9,3 +9,6 @@ t/File/Data.t
 t/File/Drivers/Driver.pm
 t/File/Drivers/Generate.pm
 t/File/Drivers/IO.pm
+tlib/File/Package.pm
+tlib/File/SmartNL.pm
+tlib/Test/Tech.pm

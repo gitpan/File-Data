@@ -9,14 +9,22 @@ use strict;
 use warnings;
 use warnings::register;
 
-use vars qw($VERSION $DATE);
-$VERSION = '1.1';
-$DATE = '2003/07/15';
+use vars qw($VERSION $DATE $FILE);
+$VERSION = '1.11';
+$DATE = '2003/07/26';
+$FILE = __FILE__;
 
 use File::Spec;
 use Symbol;
 use File::PM2File;
 use File::SmartNL;
+
+use SelfLoader;
+
+1
+
+__DATA__
+
 
 ######
 #
@@ -177,7 +185,7 @@ follow on the next lines. For example,
  use warnings::register;
 
  use vars qw($VERSION $DATE $FILE );
- $VERSION = '0.03';
+ $VERSION = '0.02';
  $DATE = '2003/07/04';
  $FILE = __FILE__;
 
