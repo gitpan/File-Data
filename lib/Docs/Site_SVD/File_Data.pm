@@ -10,16 +10,16 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE );
-$VERSION = '0.02';
+$VERSION = '0.03';
 $DATE = '2003/07/11';
 $FILE = __FILE__;
 
 use vars qw(%INVENTORY);
 %INVENTORY = (
-    'lib/Docs/Site_SVD/File_Data.pm' => [qw(0.02 2003/07/11), 'revised 0.01'],
-    'MANIFEST' => [qw(0.02 2003/07/11), 'generated, replaces 0.01'],
-    'Makefile.PL' => [qw(0.02 2003/07/11), 'generated, replaces 0.01'],
-    'README' => [qw(0.02 2003/07/11), 'generated, replaces 0.01'],
+    'lib/Docs/Site_SVD/File_Data.pm' => [qw(0.03 2003/07/11), 'revised 0.02'],
+    'MANIFEST' => [qw(0.03 2003/07/11), 'generated, replaces 0.02'],
+    'Makefile.PL' => [qw(0.03 2003/07/11), 'generated, replaces 0.02'],
+    'README' => [qw(0.03 2003/07/11), 'generated, replaces 0.02'],
     'lib/File/Data.pm' => [qw(0.02 2003/07/04), 'unchanged'],
     't/File/Data.d' => [qw(0.01 2003/07/07), 'unchanged'],
     't/File/Data.pm' => [qw(0.01 2003/06/07), 'unchanged'],
@@ -53,9 +53,9 @@ use vars qw(%INVENTORY);
 
   File::Data - Access the __DATA__ section of a program module
 
- Revision: A
+ Revision: B
 
- Version: 0.02
+ Version: 0.03
 
  Date: 2003/07/11
 
@@ -92,7 +92,7 @@ module.
 
 =head2 1.3 Document overview.
 
-This document releases File::Data version 0.02
+This document releases File::Data version 0.03
 providing a description of the inventory, installation
 instructions and other information necessary to
 utilize and track this release.
@@ -108,8 +108,8 @@ system file specification.
 This document releases the file found
 at the following repository(s):
 
-   http://www.softwarediamonds/packages/File-Data-0.02
-   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.02
+   http://www.softwarediamonds/packages/File-Data-0.03
+   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.03
 
 
 Restrictions regarding duplication and license provisions
@@ -177,10 +177,10 @@ consists of the following files:
 
  file                                                         version date       comment
  ------------------------------------------------------------ ------- ---------- ------------------------
- lib/Docs/Site_SVD/File_Data.pm                               0.02    2003/07/11 revised 0.01
- MANIFEST                                                     0.02    2003/07/11 generated, replaces 0.01
- Makefile.PL                                                  0.02    2003/07/11 generated, replaces 0.01
- README                                                       0.02    2003/07/11 generated, replaces 0.01
+ lib/Docs/Site_SVD/File_Data.pm                               0.03    2003/07/11 revised 0.02
+ MANIFEST                                                     0.03    2003/07/11 generated, replaces 0.02
+ Makefile.PL                                                  0.03    2003/07/11 generated, replaces 0.02
+ README                                                       0.03    2003/07/11 generated, replaces 0.02
  lib/File/Data.pm                                             0.02    2003/07/04 unchanged
  t/File/Data.d                                                0.01    2003/07/07 unchanged
  t/File/Data.pm                                               0.01    2003/06/07 unchanged
@@ -285,7 +285,7 @@ t/Test/TestUtil/TestUtil....NOK 18# Test 18 got: '$VAR1 = '\\=head1 Title Page
   File::Data - Access the __DATA__ section of a program module
 
 
- Revision: A
+ Revision: B
 
 [snip]
 
@@ -456,8 +456,8 @@ Follow the instructions for the the chosen installation software.
 
 The distribution file is at the following respositories:
 
-   http://www.softwarediamonds/packages/File-Data-0.02
-   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.02
+   http://www.softwarediamonds/packages/File-Data-0.03
+   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.03
 
 
 =item Prerequistes.
@@ -466,6 +466,7 @@ The distribution file is at the following respositories:
  'File::Package' => '0',
  'File::TestPath' => '0',
  'Text::Scrub' => '0',
+ 'File::PM2File' => '0',
  'Test::Tech' => '1.08',
 
 
@@ -576,11 +577,11 @@ __DATA__
 DISTNAME: File-Data^
 REPOSITORY_DIR: packages^
 
-VERSION : 0.02^
+VERSION : 0.03^
 FREEZE: 1^
 PREVIOUS_DISTNAME:  ^
-PREVIOUS_RELEASE: 0.01^
-REVISION: A^
+PREVIOUS_RELEASE: 0.02^
+REVISION: B^
 
 AUTHOR  : SoftwareDiamonds.com E<lt>support@SoftwareDiamonds.comE<gt>^
 
@@ -618,6 +619,7 @@ PREREQ_PM:
 'File::Package' => '0',
 'File::TestPath' => '0',
 'Text::Scrub' => '0',
+'File::PM2File' => '0',
 'Test::Tech' => '1.08',
 ^
 

@@ -23,7 +23,7 @@ my $tests = join ' ',unix2os('t/File/Data.t');
 WriteMakefile(
     NAME => 'File::Data',
     DISTNAME => 'File-Data',
-    VERSION  => '0.02',
+    VERSION  => '0.03',
     dist     => {COMPRESS => 'gzip',
                 'gz' => 'gz'},
     test     => {TESTS => $tests},
@@ -31,6 +31,7 @@ WriteMakefile(
                   'File::Package' => '0',
                   'File::TestPath' => '0',
                   'Text::Scrub' => '0',
+                  'File::PM2File' => '0',
                   'Test::Tech' => '1.08',},
     
 
