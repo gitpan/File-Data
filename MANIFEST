@@ -4,7 +4,8 @@ MANIFEST
 Makefile.PL
 README
 TODO
-t/extra.txt
-t/read.txt
+t/extra
+t/japh
+t/read
 t/test.t
-t/write.txt
+t/write

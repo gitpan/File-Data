@@ -8,11 +8,7 @@
 
 	perl Makefile.PL
 
-	make
-
-	make test
-
-	make install
+	make && make test && make install
 
 	perldoc File::Data
 

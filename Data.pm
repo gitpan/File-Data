@@ -1,29 +1,31 @@
 # File::Data into cvs
 # Copyright 2000 2001 Richard Foley richard.foley@rfi.net
-# $Id: Data.pm,v 1.8 2002/01/15 09:13:38 richard Exp $
+# $Id: Data.pm,v 1.10 2002/02/17 17:38:08 richard Exp $
 #
-# TODO
-# default behaviour returns object - UC returns args!
 
 package File::Data;           
 use strict;
 use Carp;
 use Data::Dumper;
+use Fcntl qw(:flock);
 use FileHandle;
 # use File::stat;
 use vars qw(@ISA $VERSION $AUTOLOAD);
-$VERSION = do { my @r = (q$Revision: 1.8 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r }; 
+$VERSION = do { my @r = (q$Revision: 1.10 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r }; 
 $| = 1;
 
 =head1 NAME
 
-File::Data - interface to file data 
+File::Data - interface to file data
 
 =head1 DESCRIPTION
 
-Wraps all the accessing of a file into a convenient set of calls for reading and writing data, including a simple regex interface.
+Wraps all the accessing of a file into a convenient set of calls for
+reading and writing data, including a simple regex interface.  
 
-Note that the file needs to exist prior to using this module!  See L<new()>
+Note that the file needs to exist prior to using this module!
+
+See L<new()>
 
 =head1 SYNOPSIS
 
@@ -39,7 +41,7 @@ Note that the file needs to exist prior to using this module!  See L<new()>
 
 	$o_dat->prepend("first line\n"); # line 0
 
-	$o_dat->append("original second line\n");
+	$o_dat->append("original second (last) line\n");
 
 	$o_dat->insert(2, "new second line\n"); # inc. zero!
 
@@ -60,16 +62,16 @@ See L<METHODS> and L<EXAMPLES>.
 
 =head1 IMPORTANT
 
-lowercase method calls B<all> return the object itself, so you can chain calls.
+lowercase method calls return the object itself, so you can chain calls.
 
-	my $o_obj = $o_dat->read; # ! object !
+	my $o_obj = $o_dat->read; # ! <= object !
 
-UPPERCASE method calls B<all> return the data relevant to the operation.
+UPPERCASE method calls return the data relevant to the operation.
 
-	my @data  = $o_dat->READ; # ! data   !
+	my @data  = $o_dat->READ; # ! <= data   !
 
-While this may occasionally be frustrating, it is at least consistent, and 
-using the B<principle of least surprise> should be comforting to most people.
+While this may occasionally be frustrating, using the B<principle of
+least surprise>, it is at least consistent.
 
 See L<do>
 
@@ -77,13 +79,30 @@ See L<do>
 
 =over 4
 
-The idea is to standardise accessing of files for repetitive and straight forward tasks, and remove the repeated and therefore error prone file access I have seen in many sites, where varying, (with equivalently varying success), methods are used to achieve essentially the same result - a simple search and replace and/or a regex match.  
+The idea is to standardise accessing of files for repetitive and straight
+forward tasks, and remove the repeated and therefore error prone file
+access I have seen in many sites, where varying, (with equivalently
+varying success), methods are used to achieve essentially the same result
+- a simple search and replace and/or a regex match.
 
-Approaches to opening and working with files vary so much, where one person may wish to know if a file exists, another wishes to know whether the target is a file, or if it is readable, or writable and so on.  Sometimes, in production code even (horror), file's are opened without any checks of whether the open was succesful.  Then there's a loop through each line to find the first or many patterns to read and/or replace.  With a failure, normally the only message is 'permission denied', is that read or write access, does the file even exist? etc.
+Approaches to opening and working with files vary so much, where
+one person may wish to know if a file exists, another wishes to know
+whether the target is a file, or if it is readable, or writable and so on.
+Sometimes, in production code even (horror), file's are opened without any
+checks of whether the open was succesful.  Then there's a loop through
+each line to find the first or many patterns to read and/or replace.
+With a failure, normally the only message is 'permission denied', is
+that read or write access, does the file even exist? etc.
 
-This module attempts to provide a plain/generic interface to accessing a file's data.  This will not suit every situation, but I have included some examples which will hopefully demonstrate that it may be used in situations where people would normally go through varying and inconsistent, (and therefore error-prone),  procedures - to get at the same data.  
+This module attempts to provide a plain/generic interface to accessing
+a file's data.  This will not suit every situation, but I have included
+some examples which will hopefully demonstrate that it may be used
+in situations where people would normally go through varying and
+inconsistent, (and therefore error-prone),  procedures - to get at the
+same data.
 
-Theoretically you can mix and match your read and writes so long as you don't open read-only. 
+Theoretically you can mix and match your read and writes so long as you
+don't open read-only.
 
 	my $o_dat  = File::Data->new($file);
 
@@ -91,7 +110,12 @@ Theoretically you can mix and match your read and writes so long as you don't op
 
 	print $o_dat->READ;
 
-One last thing - I'm sure this could be made much more efficient, and I'll be very interested to try and incorporate any suggestions to that effect.  Note though that the intention has been to create a simple moderately consistent interface, rather than a complicated one.  Sometimes it's better to roll your own, and sometimes you don't have to reinvent the wheel - TMTOWTDI.
+One last thing - I'm sure this could be made much more efficient,
+and I'll be very interested to try and incorporate any suggestions
+to that effect.  Note though that the intention has been to create a
+simple moderately consistent interface, rather than a complicated one.
+Sometimes it's better to roll your own, and sometimes you don't have to
+reinvent the wheel - TMTOWTDI.
 
 =back
 
@@ -100,7 +124,7 @@ One last thing - I'm sure this could be made much more efficient, and I'll be ve
 # Methods we like:
 # ================================================================
 # 
-my @_METHODS = qw(append insert prepend read replace search write);
+my @_METHODS = qw(append insert prepend read replace return search write);
 my $_METHODS = join('|', @_METHODS);
 
 =head1 METHODS
@@ -117,15 +141,17 @@ Create a new File::Data object (default read-write).
 
 Each file should have it's own discrete object.
 
-Note that if you open a file read-only and then attempt to write to it, that 
-will be regarded as an error, even if you change the permissions in the meantime.
+Note that if you open a file read-only and then attempt to write to it,
+that will be regarded as an error, even if you change the permissions
+in the meantime.
 
-Further: The file B<must> exist before succesful use of this method is possible.  
-This is B<not> a replacement for modules which create and delete files, 
-this is purely designed as an interface to the B<data> of existing files.  
-A B<create> function is a future possibility.
+Further: The file B<must> exist before succesful use of this method
+is possible.  This is B<not> a replacement for modules which create and
+delete files, this is purely designed as an interface to the B<data>
+of existing files.  A B<create> function is a future possibility.
 
-Look in L<EXAMPLES> for a more complete explanation of possible arguments to the B<new()> method
+Look in L<EXAMPLES> for a more complete explanation of possible arguments
+to the B<new()> method
 
 =cut
 
@@ -474,7 +500,7 @@ sub REPLACE {
 	return ($File::Data::REFERENCE) ? \@ret : @ret;
 }
 
-=item return
+=item xreturn
 
 Returns the product of the given (or last) B<do()>, undef on failure.
 
@@ -528,6 +554,21 @@ sub delete {
 	return ();
 }
 
+=item close 
+
+Close the file
+
+	my $i_closed = $o_dat->close; # 1|0
+
+=cut
+
+sub close {
+	my $self = shift;
+
+	return $self->_close;
+}
+
+
 =item info 
 
 placeholder - unsupported
@@ -538,13 +579,26 @@ placeholder - unsupported
 
 # 	print 'File size: '.$o_dat->stat->size;
 
-sub xfstat {
+sub xFSTAT {
 	my $self = shift;
 	my $file = shift || '_';
 
 	# print "file($file) stat: ".Dumper(stat($file));
 
 	# return stat($file);
+
+	return ();
+}
+
+sub xfstat {
+	my $self = shift;
+	my $file = shift || '_';
+
+	# print "file($file) stat: ".Dumper(stat($file));
+
+	# stat($file);
+
+	return ();
 }
 
 sub dummy {
@@ -654,15 +708,25 @@ $File::Data::STRING ||= $ENV{'File_Data_STRING'} || 1;
 
 =item $File::Data::PERMISSIONS
 
-File will be opened read-write (B<insert()> compatible) unless this variable is set explicitly or given via B<new()>.  In either case, unless it is one of our B<keys> declared below, it will be passed on to B<FileHandle> and otherwise not modified.  We don't support fancy permission sets.
+File will be opened read-write (B<insert()> compatible) unless this
+variable is set explicitly or given via B<new()>.  In either case,
+unless it is one of our valid permission B<keys> declared below,
+it will be passed on to B<FileHandle> and otherwise not modified.
+We don't support fancy permission sets, just read or write.
 
-Read-only permissions may be explicitly set using one of the following B<keys>:
+Read-only permissions may be explicitly set using one of these B<keys>:
 
 	$File::Data::PERMISSIONS = 'ro'; # or readonly or <
 
 Or, equivalently, for read-write (default):
 
 	$File::Data::PERMISSIONS = 'rw'; # or readwrite or +<
+
+Note that it makes no sense to have an 'append only' command (>>),
+we'd have to disable all of write, search and replace, and insert,
+etc. in that case - just use the B<append()> method only.
+
+This is a KISS-compatible module remember?
 
 =cut
 
@@ -697,11 +761,16 @@ sub AUTOLOAD {
  
     if ($meth =~ /^($_METHODS)$/io) { 		# convenience
 		$self->_debug("rerouting: $meth(@_)");
-        return $self->do(uc($meth), @_); 
+        return $self->do(uc($meth), @_);					# <- 
         # return $self->do(lc($meth), @_); 
     } else { 								# or fallback
 		my $FH = $self->_fh;
-		return $FH->$meth(@_);
+		if ($FH->can($meth)) {
+			return $FH->$meth(@_);							# <-
+		} else {									
+			$DB::single=2; # rjsf
+			return $self->_error("no such method($meth)!"); # <-
+		}
     }
 }
 
@@ -810,9 +879,9 @@ Variable get/set method
 
 =cut
 
-my $_VARS = join('|', qw(
-	append backup error errors filename filehandle last limbo 
-	permissions insert prepend read replace search state write writable
+# @_METHODS, qw(append insert prepend read replace return search write);
+my $_VARS = join('|', @_METHODS, qw(
+	backup error errors filename filehandle last limbo permissions state writable
 ));
 
 sub _var {
@@ -901,7 +970,7 @@ sub _err {
 
 =item _error
 
-By default prints error to STDERR, will B<croak> if B<File::Data::FATAL> set.
+By default prints error to STDERR, will B<croak> if B<File::Data::FATAL> set, returning ().
 
 See L<EXAMPLES> for info on how to pass your own error handlers in.
 
@@ -942,9 +1011,7 @@ sub _error {
 			}
 		}
 
-		
-
-	return @ret; # 
+	return (); # 
 }
 
 =item _mapfile
@@ -1169,25 +1236,22 @@ sub _check_access {
 	if (!($file =~ /.+/o && $perm =~ /.+/o)) {
 		$self->_error("no filename($file) or permissions($perm) given!");
 	} else {
-		stat($file);
+		stat($file); # just once
 		if (! -e _) {
 			$self->_error("target($file) does not exist!");
 		} else {
-			# $self->fstat('_'); # ref	
 			if (! -f _) {
 				$self->_error("target($file) is not a file!");
 			} else {	
-				if (! -r _) {
-					$self->_error("file($file) cannot be read!");
+				if (!-r _) {
+					$self->_error("file($file) cannot be read by effective uid($>) or gid($))!");
 				} else {
-					$self->_debug("existing file can be read") if $File::Data::DEBUG;
-					if ($perm =~ /^<$/o) {
+					if ($perm =~ /^<$/o) { # readable
 						$i_ok++;
 					} else {
 						if (! -w $file) {
-							$self->_error("file($file) cannot be written!");
-						} else {
-							$self->_debug("can be written") if $File::Data::DEBUG;
+							$self->_error("file($file) cannot be written by effective uid($>) or gid($))!");
+						} else {           # writable
 							$self->_var('writable' => 1);
 							$i_ok++;
 						}
@@ -1224,7 +1288,7 @@ sub _open {
 		$FH = $self->_fh($FH);
 		if ($FH) {
 			$i_ok++;
-			# $i_ok = $self->_lock if $self->_writable;
+			$i_ok = $self->_lock; # if $self->_writable;
 		}
 		$self->_debug("FH($FH) => i_ok($i_ok)");
 	}
@@ -1246,11 +1310,20 @@ sub _lock {
 	my $i_ok = 0;
 
 	if ($FH) {
-		if (flock($FH, 2)) {
-			$i_ok++;
+		my $file = $self->_var('filename');
+		# $DB::single=2; # rjsf
+		if ($self->_writable) {
+			if (flock($FH, LOCK_EX | LOCK_NB)) {
+				$i_ok++;
+			} else {
+				$self->_error("Can't overlock file($file) handle($FH)!");
+			}
 		} else {
-			my $file = $self->_var('filename');
-			$self->_error("Can't lock file($file) handle($FH)!");
+			if (flock($FH, LOCK_SH | LOCK_NB)) {
+				$i_ok++;
+			} else {
+				$self->_error("Can't lock shared file($file) handle($FH)!");
+			}
 		}
 	}
 
@@ -1271,12 +1344,11 @@ sub _unlock {
 	my $i_ok = 0;
 
 	if ($FH) {
-		if (flock($FH, 8)) {
-			$i_ok++;
-		} else {
-			my $file = $self->_var('filename');
-			$self->_error("Can't unlock file($file) handle($FH)!");
-		}
+		# if (flock($FH, LOCK_UN)) { apparently there's a race, perl does it better :) }
+		$i_ok++;
+	} else {
+		my $file = $self->_var('filename');
+		$self->_error("Can't unlock file($file) handle($FH)!");
 	}
 
 	return $i_ok;
@@ -1296,12 +1368,10 @@ sub _close {
 	my $i_ok = 0;
 
 	if ($FH) {
-		#if ($FH->islocked) {
-		#	$self->_unlock;
-		#}
-		if ($FH->close) {
+		if ($FH->close) { # perl unlocks it better than we can (race)
 			$i_ok++;
 		} else {
+			$DB::single=2; # rjsf
 			my $file = $self->_var('filename');
 			$self->_error("Can't close file($file) handle($FH)!");
 		}
@@ -1318,7 +1388,7 @@ sub _writable {
 	if ($i_ok != 1) {
 		my $file  = $self->_var('filename');
 		my $perms = $self->_var('permissions');
-		$self->_error("$file not writable($i_ok) with permissions($perms)"); 
+		$self->_debug("$file not writable($i_ok) with permissions($perms)"); 
 	}
 
 	return $i_ok;
@@ -1339,7 +1409,8 @@ sub DESTROY {
 
 Richard Foley <C> richard.foley@rfi.net 2001
 
-For those that are interested, the docs and tests were (mostly) written before the code.
+For those that are interested, the docs and tests were (mostly) written
+before the code.
 
 =cut
 
@@ -1353,16 +1424,20 @@ Simple wrapper for method calls, returning the content.
 
     my @appended = $o_dat->do('append', @this);
 
-An addendum to this method, and to make life generally easier, is that you can 
-also call any of the above methods in uppercase, to call via B<do()> eg;
+An addendum to this method, and to make life generally easier, is that
+you can also call any of the above methods in uppercase, to call via
+B<do()> eg;
 
     my @data = $o_dat->WRITE($this)->APPEND->($that)->read;
 
-First argument is the method to call, followed by the arguments that method expects.
+First argument is the method to call, followed by the arguments that
+method expects.
 
-    perl -MFile::Data -e "print File::Data->new($file)->INSERT(3, \"third line\n\")->READ";
+    perl -MFile::Data -e "print File::Data->new($file)->INSERT(3,
+    \"third line\n\")->READ";
 
-If you want to get at the output of a particular called method see L<return()>
+If you want to get at the output of a particular called method see
+L<return()>
 
 =cut
 
