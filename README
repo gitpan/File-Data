@@ -5,11 +5,11 @@ Title Page
 
       File::Data - Access the __DATA__ section of a program module
 
-     Revision: B
+     Revision: C
 
-     Version: 0.03
+     Version: 0.04
 
-     Date: 2003/07/11
+     Date: 2003/07/15
 
      Prepared for: General Public 
 
@@ -39,7 +39,7 @@ Title Page
 
   1.3 Document overview.
 
-    This document releases File::Data version 0.03 providing a description
+    This document releases File::Data version 0.04 providing a description
     of the inventory, installation instructions and other information
     necessary to utilize and track this release.
 
@@ -51,8 +51,8 @@ Title Page
 
     This document releases the file found at the following repository(s):
 
-       http://www.softwarediamonds/packages/File-Data-0.03
-       http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.03
+       http://www.softwarediamonds/packages/File-Data-0.04
+       http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.04
 
     Restrictions regarding duplication and license provisions are as
     follows:
@@ -97,11 +97,11 @@ Title Page
 
      file                                                         version date       comment
      ------------------------------------------------------------ ------- ---------- ------------------------
-     lib/Docs/Site_SVD/File_Data.pm                               0.03    2003/07/11 revised 0.02
-     MANIFEST                                                     0.03    2003/07/11 generated, replaces 0.02
-     Makefile.PL                                                  0.03    2003/07/11 generated, replaces 0.02
-     README                                                       0.03    2003/07/11 generated, replaces 0.02
-     lib/File/Data.pm                                             0.02    2003/07/04 unchanged
+     lib/Docs/Site_SVD/File_Data.pm                               0.04    2003/07/15 revised 0.03
+     MANIFEST                                                     0.04    2003/07/15 generated, replaces 0.03
+     Makefile.PL                                                  0.04    2003/07/15 generated, replaces 0.03
+     README                                                       0.04    2003/07/15 generated, replaces 0.03
+     lib/File/Data.pm                                             0.03    2003/07/15 revised 0.02
      t/File/Data.d                                                0.01    2003/07/07 unchanged
      t/File/Data.pm                                               0.01    2003/06/07 unchanged
      t/File/Data.t                                                0.01    2003/07/07 unchanged
@@ -197,7 +197,7 @@ Title Page
 
           File::Data - Access the __DATA__ section of a program module
 
-         Revision: B
+         Revision: C
 
         [snip]
 
@@ -297,6 +297,10 @@ Title Page
         was a change to make the name more descriptive of the contents of
         the program module.
 
+    File::Data 0.03
+        Recoded using gensym to make sure file handle is a reference to a
+        GLOB
+
   3.4 Adaptation data.
 
     This installation requires that the installation site has the Perl
@@ -333,8 +337,8 @@ Title Page
 
         The distribution file is at the following respositories:
 
-           http://www.softwarediamonds/packages/File-Data-0.03
-           http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.03
+           http://www.softwarediamonds/packages/File-Data-0.04
+           http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.04
 
     Prerequistes.
          'File::SmartNL' => '0',

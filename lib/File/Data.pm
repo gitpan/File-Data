@@ -11,9 +11,10 @@ use warnings::register;
 
 use vars qw($VERSION $DATE);
 $VERSION = '1.1';
-$DATE = '2003/07/04';
+$DATE = '2003/07/15';
 
 use File::Spec;
+use Symbol;
 use File::PM2File;
 use File::SmartNL;
 
@@ -41,7 +42,7 @@ sub pm2datah
 
     local($/);
     $/ = "__DATA__";
-    my $fh;
+    my $fh = gensym;
     unless( open $fh, "< $file" ) {
         warn "# Cannot open $file\n";
         return undef;
@@ -57,7 +58,7 @@ sub pm2datah
         $data =  <$fh>;
     }
 
-    $fh
+    $fh;
 }
 
 ######
@@ -176,8 +177,8 @@ follow on the next lines. For example,
  use warnings::register;
 
  use vars qw($VERSION $DATE $FILE );
- $VERSION = '0.02';
- $DATE = '2003/06/18';
+ $VERSION = '0.03';
+ $DATE = '2003/07/04';
  $FILE = __FILE__;
 
  __DATA__

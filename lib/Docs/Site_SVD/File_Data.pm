@@ -10,17 +10,17 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE );
-$VERSION = '0.03';
-$DATE = '2003/07/11';
+$VERSION = '0.04';
+$DATE = '2003/07/15';
 $FILE = __FILE__;
 
 use vars qw(%INVENTORY);
 %INVENTORY = (
-    'lib/Docs/Site_SVD/File_Data.pm' => [qw(0.03 2003/07/11), 'revised 0.02'],
-    'MANIFEST' => [qw(0.03 2003/07/11), 'generated, replaces 0.02'],
-    'Makefile.PL' => [qw(0.03 2003/07/11), 'generated, replaces 0.02'],
-    'README' => [qw(0.03 2003/07/11), 'generated, replaces 0.02'],
-    'lib/File/Data.pm' => [qw(0.02 2003/07/04), 'unchanged'],
+    'lib/Docs/Site_SVD/File_Data.pm' => [qw(0.04 2003/07/15), 'revised 0.03'],
+    'MANIFEST' => [qw(0.04 2003/07/15), 'generated, replaces 0.03'],
+    'Makefile.PL' => [qw(0.04 2003/07/15), 'generated, replaces 0.03'],
+    'README' => [qw(0.04 2003/07/15), 'generated, replaces 0.03'],
+    'lib/File/Data.pm' => [qw(0.03 2003/07/15), 'revised 0.02'],
     't/File/Data.d' => [qw(0.01 2003/07/07), 'unchanged'],
     't/File/Data.pm' => [qw(0.01 2003/06/07), 'unchanged'],
     't/File/Data.t' => [qw(0.01 2003/07/07), 'unchanged'],
@@ -53,11 +53,11 @@ use vars qw(%INVENTORY);
 
   File::Data - Access the __DATA__ section of a program module
 
- Revision: B
+ Revision: C
 
- Version: 0.03
+ Version: 0.04
 
- Date: 2003/07/11
+ Date: 2003/07/15
 
  Prepared for: General Public 
 
@@ -92,7 +92,7 @@ module.
 
 =head2 1.3 Document overview.
 
-This document releases File::Data version 0.03
+This document releases File::Data version 0.04
 providing a description of the inventory, installation
 instructions and other information necessary to
 utilize and track this release.
@@ -108,8 +108,8 @@ system file specification.
 This document releases the file found
 at the following repository(s):
 
-   http://www.softwarediamonds/packages/File-Data-0.03
-   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.03
+   http://www.softwarediamonds/packages/File-Data-0.04
+   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.04
 
 
 Restrictions regarding duplication and license provisions
@@ -177,11 +177,11 @@ consists of the following files:
 
  file                                                         version date       comment
  ------------------------------------------------------------ ------- ---------- ------------------------
- lib/Docs/Site_SVD/File_Data.pm                               0.03    2003/07/11 revised 0.02
- MANIFEST                                                     0.03    2003/07/11 generated, replaces 0.02
- Makefile.PL                                                  0.03    2003/07/11 generated, replaces 0.02
- README                                                       0.03    2003/07/11 generated, replaces 0.02
- lib/File/Data.pm                                             0.02    2003/07/04 unchanged
+ lib/Docs/Site_SVD/File_Data.pm                               0.04    2003/07/15 revised 0.03
+ MANIFEST                                                     0.04    2003/07/15 generated, replaces 0.03
+ Makefile.PL                                                  0.04    2003/07/15 generated, replaces 0.03
+ README                                                       0.04    2003/07/15 generated, replaces 0.03
+ lib/File/Data.pm                                             0.03    2003/07/15 revised 0.02
  t/File/Data.d                                                0.01    2003/07/07 unchanged
  t/File/Data.pm                                               0.01    2003/06/07 unchanged
  t/File/Data.t                                                0.01    2003/07/07 unchanged
@@ -285,7 +285,7 @@ t/Test/TestUtil/TestUtil....NOK 18# Test 18 got: '$VAR1 = '\\=head1 Title Page
   File::Data - Access the __DATA__ section of a program module
 
 
- Revision: B
+ Revision: C
 
 [snip]
 
@@ -414,6 +414,10 @@ Changed prerequisite from "Test::STD::Scrub" to "Text::Scrub".
 This was a change to make the name more descriptive of the contents
 of the program module.
 
+=item File::Data 0.03
+
+Recoded using gensym to make sure file handle is a reference to a GLOB
+
 =back
 
 =head2 3.4 Adaptation data.
@@ -456,8 +460,8 @@ Follow the instructions for the the chosen installation software.
 
 The distribution file is at the following respositories:
 
-   http://www.softwarediamonds/packages/File-Data-0.03
-   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.03
+   http://www.softwarediamonds/packages/File-Data-0.04
+   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/File-Data-0.04
 
 
 =item Prerequistes.
@@ -549,7 +553,6 @@ Plain Old Documentation
 
 =head1 2.0 SEE ALSO
 
- 
 L<File::Data|File::Data>
 
 =for html
@@ -577,11 +580,11 @@ __DATA__
 DISTNAME: File-Data^
 REPOSITORY_DIR: packages^
 
-VERSION : 0.03^
+VERSION : 0.04^
 FREEZE: 1^
 PREVIOUS_DISTNAME:  ^
-PREVIOUS_RELEASE: 0.02^
-REVISION: B^
+PREVIOUS_RELEASE: 0.03^
+REVISION: C^
 
 AUTHOR  : SoftwareDiamonds.com E<lt>support@SoftwareDiamonds.comE<gt>^
 
@@ -849,6 +852,10 @@ Changed prerequisite from "Test::STD::Scrub" to "Text::Scrub".
 This was a change to make the name more descriptive of the contents
 of the program module.
 
+\=item File::Data 0.03
+
+Recoded using gensym to make sure file handle is a reference to a GLOB
+
 \=back
 
 ^
@@ -988,8 +995,10 @@ Plain Old Documentation
 \=back
 ^
 
-SEE_ALSO:  
+SEE_ALSO: 
+
 L<File::Data|File::Data>
+
 ^
 
 HTML:
