@@ -2,8 +2,9 @@ Changes
 Data.pm
 MANIFEST
 Makefile.PL
+README
 TODO
-perl.errs
+t/extra.txt
 t/read.txt
 t/test.t
 t/write.txt

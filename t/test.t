@@ -1,7 +1,7 @@
 #
 # File::Data tests
 # <C> Richard Foley RFI 2001 richard.foley@rfi.net
-# $Id: test.t,v 1.1.1.1 2001/11/12 11:43:16 richard Exp $ 
+# $Id: test.t,v 1.2 2001/12/03 20:06:09 richard Exp $ 
 # 
 
 use lib '/home/richard';

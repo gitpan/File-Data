@@ -1,0 +1,434 @@
+NAME
+    File::Data - interface to file data
+
+DESCRIPTION
+    Wraps all the accessing of a file into a convenient set of calls for
+    reading and writing data, including a simple regex interface.
+
+SYNOPSIS
+            use strict;
+
+                use File::Data;
+
+                my $o_dat = File::Data->new('./jabber');
+
+                $o_dat->write("  Bewxre the Jabberwock my son,\n");
+
+                $o_dat->prepend("The Jxbberwock by Lewis Cxrroll:\n");
+
+                $o_dat->append("  the claws thxt snxtch,\n  ...\n");
+
+                $o_dat->insert(2, "  the jaws which bite.\n");
+
+                $o_dat->replace('x', 'a');
+
+                print $o_dat->SEARCH('The.+\n')->REPLACE("The.+\n", '')->return('search');
+
+                print $o_dat->read();
+
+        Or, perhaps more seriously :-}
+
+                my $o_sgm = File::Data->new('./sgmlfile');
+
+                print "new SGML data: ".$o_sgm->replace(
+                        '\<\s*((?i)tag)\s*\>\s*((?s).*)\s*\<\s*((?i)\s*\/\s*tag)\s*\>', 
+                        qq|<tag>key="val"</tag>|,               
+                ) if $o_sgm;
+
+        See the METHODS manpage and the EXAMPLES manpage.
+
+EXPLANATION
+            The idea is to standardise accessing of files for repetitive and
+            straight forward tasks, and remove the repeated and therefore
+            error prone file access I have seen in many sites, where
+            varying, (with equivalently varying success), methods are used
+            to achieve essentially the same result - a simple search and
+            replace and/or a regex match.
+
+            Approaches to opening and working with files vary so much, where
+            one person may wish to know if a file exists, another wishes to
+            know whether the target is a file, or if it is readable, or
+            writable and so on. Sometimes, in production code even (horror),
+            file's are opened without any checks of whether the open was
+            succesful. Then there's a loop through each line to find the
+            first or many patterns to read and/or replace. With a failure,
+            normally the only message is 'permission denied', is that read
+            or write access, does the file even exist? etc.
+
+            This module attempts to provide a plain/generic interface to
+            accessing a file's data. This will not suit every situation, but
+            I have included some examples which will hopefully demonstrate
+            that it may be used in situations where people would normally go
+            through the same procedure for the umpteenth time to get at the
+            same data.
+
+            Theoretically you can mix and match your read and writes so long
+            as you don't open read-only.
+
+                    my $o_dat    = File::Data->new($file);
+
+                    my @partial  = $o_dat->search($pattern);
+
+                    my $i_cnt    = $o_dat->replace($search, $replace);
+
+            One last thing - I'm sure this could be made much more
+            efficient, and I'll be very interested to try and incorporate
+            any suggestions to that effect. Note though that the intention
+            has been to create a simple moderately consistent interface,
+            rather than a complicated one. Sometimes it's better to roll
+            your own, and sometimes you don't have to reinvent the wheel -
+            TMTOWTDI.
+
+METHODS
+        new Create a new File::Data object (default read-write).
+
+                    my $o_rw = File::Data->new($filename); # read-write
+
+                    my $o_ro = File::Data->new($filename, 'ro'); # read-only
+
+            Note that if you open a file read-only and then attempt to write
+            to it, that will be regarded as an error, even if you change the
+            permissions in the meantime.
+
+            Each file should have it's own discrete object.
+
+            Look in the EXAMPLES manpage for a more complete explanation of
+            possible arguments to the new() method
+
+        read
+            Read all data from file
+
+                    my @data = $o_dat->read;
+
+        write
+            Write data to file
+
+                    my @written = $o_dat->write;
+
+        prepend
+            Prepend to file
+
+                    my @prepended = $o_dat->prepend(\@lines);
+
+        insert
+            Insert data at line number, starting from '0'
+
+                    my @inserted = $o_dat->insert($i_lineno, \@lines);
+
+        append
+            Append to file
+
+                    my @appended = $o_dat->append(\@lines);
+
+        search
+            Retrieve data out of a file, simple list of all matches found
+            are returned.
+
+            Note - you must use capturing parentheses for this to work!
+
+            my @addrs = $o_dat->search('/^(.*\@.*)$/');
+
+            my @names = $o_dat->search('/^(?:[^:]:){4}([^:]+):/');
+
+        replace
+            Replace data in a 'search and replace' manner, returns the final
+            data.
+
+                    my @data = $o_dat->replace($search, $replace);
+
+                    my @data = $o_dat->replace(
+                            q|\<a href=(['"])([^$1]+)?$1| => q|'my.sales.com'|,
+                    );
+
+            This is simple, in that you can do almost anything in the search
+            side, but the replace side is a bit more restricted, as we can't
+            effect the replacement modifiers on the fly.
+
+            If you really need this, perhaps (?{}) can help?
+
+        do  Simple wrapper for method calls, returning the object, so that
+            you can chain them.
+
+                my $o_dat = $o_dat->do('insert', @insertargs)->do(\'append', @appendargs)->do('read');
+
+            An addendum to this method, and to make life generally easier,
+            is that you can also call any of the above methods in uppercase,
+            to call via do() eg;
+
+                my @data = $o_dat->WRITE($this)->APPEND->($that)->read;
+
+            First argument is the method to call, followed by the arguments
+            that method expects.
+
+                perl -MFile::Data -e "print File::Data->new($file)->INSERT(3, \"third line\n\")->read";
+
+            If you want to get at the output of a particular called method
+            see the return() entry elsewhere in this document
+
+        return
+            Returns the product of the given (or last) do(), undef on
+            failure.
+
+                my @prepended = $o_dat->PREPEND($a)->APPEND($b)->return('prepend');
+
+                my @appended  = $o_dat->PREPEND($a)->APPEND($b)->return; # like read()
+
+        create
+            placeholder - unsupported
+
+        delete
+            placeholder - unsupported
+
+        info
+            placeholder - unsupported
+
+VARIABLES
+        Various variables may be set affecting the behaviour of the module.
+
+        $File::Data::DEBUG
+            Set to 0 (default) or 1 for debugging information to be printed
+            on STDOUT.
+
+                    $File::Data::DEBUG = 1;
+
+            Alternatively set to a regex of any of the prime methods to
+            debug them individually.
+
+                    $File::Data::DEBUG = '(ap|pre)pend';
+
+        $File::Data::FATAL
+            Will die if there is any failure in accessing the file, or
+            reading the data.
+
+            Default = 0 (don't die - just warn);
+
+                    $File::Data::FATAL = 1; # die
+
+        $File::Data::REFERENCE
+            Will return a reference, not a list, useful with large files.
+
+            Default is 0, ie; methods normally returns a list.
+
+            Hopefully future versions of perl may return a reference if you
+            request one, but as this is not supported generically yet, nor
+            do we, so we require the variable to be set. There may be an
+            argument to make this a reference by default, feedback will
+            decide.
+
+                    $File::Data::REFERENCE = 1;
+
+                    my $a_ref = $o_dat->search('.*');
+
+                    print "The log: \n".@{ $a_ref };
+
+        $File::Data::SILENT
+            Set to something other than zero if you don't want error
+            messages ?-\
+
+                    $File::Data::SILENT = 0; # per line
+
+        $File::Data::STRING
+            Where regex's are used, default behaviour is to treate the
+            entire file as a single scalar string, so that, for example,
+            (?ms:...) matches are effective.
+
+            Unset if you don't want this behaviour.
+
+                    $File::Data::STRING = 0; # per line
+
+        $File::Data::PERMISSIONS
+            File will be opened read-write (insert() compatible) unless this
+            variable is set explicitly or given via new(). In either case,
+            unless it is one of our keys declared below, it will be passed
+            on to FileHandle and otherwise not modified. We don't support
+            fancy permission sets.
+
+            Read-only permissions may be explicitly set using one of the
+            following keys:
+
+                    $File::Data::PERMISSIONS = 'ro'; # or readonly or <
+
+            Or, equivalently, for read-write (default):
+
+                    $File::Data::PERMISSIONS = 'rw'; # or readwrite or +<
+
+        # ================================================================
+
+SPECIAL
+        ...
+
+        AUTOLOAD
+            Any unrecognised function will be passed to the FileHandle
+            object for final consideration, behaviour is then effectively
+            'o_dat ISA FileHandle'.
+
+                    $o_dat->truncate;
+
+EXAMPLES
+        Typical construction examples:
+
+                my $o_rw = File::Data->new($filename, 'rw');
+
+                my $o_ro = File::Data->new($filename, 'ro');
+
+        error
+            Failure is indicated by an error routine being called, this will
+            print out any error to STDERR, unless warnings are declared
+            fatal, in which case we croak. You can register your own error
+            handlers for any method mentioned in the the METHOD manpage
+            section of this document, in addition is a special init call for
+            initial file opening and general setting up.
+
+            Create a read-write object with a callback for all errors:
+
+                    my $o_rw = File::Data->new($filename, 'ro', {
+                            'error'         => \&myerror,
+                    });
+
+            Create a read-only object with a separate object handler for
+            each error type:
+
+                    my $o_rw = File::Data->new($filename, 'rw', {
+                            'error'         => $o_generic->error_handler,
+                            'insert'        => $o_handler->insert_error,
+                            'open'          => $o_open_handler,
+                            'read'          => \&carp,
+                            'write'         => \&write_error,
+                    });
+
+        commandline
+            From the command line:
+
+                    C<perl -MFile::Data -e "File::Data->new('./test.txt')->write('some stuff')">
+
+            And (very non-obfuscated)
+
+              C<
+              perl -MFile::Data -e "@x=sort qw(perl another hacker just); print   \
+                map {split(\"\n\", ucfirst(\$_).' ')} File::Data->new('./japh')-> \ 
+                WRITE(shift(@x).\"\n\")->     \
+                APPEND(shift(@x).\"\n\")->    \
+                PREPEND(shift(@x).\"\n\")->   \
+                INSERT(2, shift(@x).\"\n\")->read"
+              >
+
+            If you still have problems, mail me the output of
+
+                    make test TEST_VERBOSE=1
+
+PRIVATE
+            Private methods not expected to be called by anybody, and
+            completely unsupported.
+
+            Expected to metamorphose regularly - do not call these - you
+            have been warned!
+
+        _var
+            Variable get/set method
+
+                    my $get = $o_dat->_var($key);           # get
+
+                    my $set = $o_dat->_var($key, $val);     # set   
+
+        _debug
+            Print given args on STDOUT
+
+                    $o_dat->_debug($msg) if $File::Data::DEBUG;
+
+        _vars
+            Return dumped env and object key and values
+
+                    print $o_dat->_vars;
+
+        _err
+            Get/set error handling methods/objects
+
+                    my $c_sub = $o_dat->_err('insert'); # or default
+
+        _error
+            By default prints error to STDERR, will croak if
+            File::Data::FATAL set.
+
+            See the EXAMPLES manpage for info on how to pass your own error
+            handlers in.
+
+        _mapfile
+            Maps file
+
+                    my $file = $o_dat->_mapfile($filename);
+
+        _mapperms
+            Maps given permissions to appropriate form for FileHandle
+
+                    my $perms = $o_dat->_mapperms('+<');    
+
+        _maperrs
+            Map error handlers, if given
+
+                    my $h_errs = $o_dat->_maperrs(\%error_handlers);
+
+        _enter
+            Mark the entering of a special section, or state
+
+                    my $entered = $o_dat->enter('search');
+
+        _leave
+            Mark the leaving of a special section, or state
+
+                    my $left = $o_dat->_leave('search');
+
+        _fh Get and set FileHandle.
+
+            Returns undef otherwise.
+
+                    my $FH = $o_dat->_fh($FH); 
+
+UTILITY
+        Private methods not expected to be called by anybody, and completely
+        unsupported.
+
+        Expected to metamorphose regularly - do not call these - you have
+        been warned!
+
+            The following utility methods return integer values
+
+                    1 = success
+
+                    0 = failure
+
+        _init
+            Setup object, open a file, with permissions.
+
+                    my $i_ok = $o_date->_init($file, $perm, $h_errs);
+
+        _check_access
+            Checks the args for existence and appropriate permissions etc.
+
+                    my $i_isok = $o_dat->_check_access($filename, $permissions);
+
+        _open
+            Open the file
+
+                    my $i_ok = $o_dat->_open;
+
+        _lock
+            Lock the file
+
+                    my $i_ok = $o_dat->_lock;
+
+        _unlock
+            Unlock the file
+
+                    my $i_ok = $o_dat->unlock;
+
+        _close
+            Close the filehandle
+
+                    my $i_ok = $o_dat->_close;
+
+AUTHOR
+        Richard Foley <C> richard.foley@rfi.net 2001
+
+        For those that are interested, the docs and tests were (mostly)
+        written before the code.
+

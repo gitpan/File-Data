@@ -1,6 +1,6 @@
 # File::Data into cvs
 # Copyright 2000 2001 Richard Foley richard.foley@rfi.net
-# $Id: Data.pm,v 1.3 2001/11/20 12:41:23 richard Exp $
+# $Id: Data.pm,v 1.4 2001/12/03 20:06:05 richard Exp $
 #
 
 package File::Data;           
@@ -10,7 +10,7 @@ use Data::Dumper;
 use FileHandle;
 # use File::stat;
 use vars qw(@ISA $VERSION $AUTOLOAD);
-$VERSION = do { my @r = (q$Revision: 1.3 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r }; 
+$VERSION = do { my @r = (q$Revision: 1.4 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r }; 
 $| = 1;
 
 =head1 NAME
