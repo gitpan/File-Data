@@ -1,8 +1,0 @@
-# File::Data todo list
-
-File::Data->new($FH); # \*FH?
-
-using Tie::Array|File to get at each line, instead of slurping?
- 
-use Tie::File
-
