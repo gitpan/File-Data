@@ -1,0 +1,9 @@
+Changes
+Data.pm
+MANIFEST
+Makefile.PL
+TODO
+perl.errs
+t/read.txt
+t/test.t
+t/write.txt
