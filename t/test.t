@@ -79,6 +79,8 @@ $i_errs = 0;
 # =============================================================================
 $i_test++; # 3
 $i_errs = 0;
+
+# invalid filename
 {
 	$File::Data::SILENT=1;
 	foreach my $file ('', $rt, qw()) {
@@ -91,6 +93,7 @@ $i_errs = 0;
 }
 ($i_errs == 0) ? ok(1) : ok(0);
 
+# invalid permissions
 {	# things that _might_ look like valid permissions to someone else
 	foreach my $perms ($ro, $rw, $rt, qw(>+< ++ <> <+ - rad read write rww roo)) {
 		my $o_rp = File::Data->new($rp, $perms);	# invalid perms
@@ -102,6 +105,7 @@ $i_errs = 0;
 }
 ($i_errs == 0) ? ok(1) : ok(0);
 
+# directory
 {
 	foreach my $dir (qw(t .. ../)) {				# rjsf - un*x only?
 		my $o_rp = File::Data->new($dir);			# dirs
@@ -113,8 +117,10 @@ $i_errs = 0;
 }
 ($i_errs == 0) ? ok(1) : ok(0);
 
+# permissions
 {
 	# $File::Data::SILENT=1;
+	my $root = !$<; #
 	foreach my $perm ('0000'..'0777') { # 
 		next if $perm =~ /[89]/; # :-\
 		my $i_cnt = chmod oct($perm), $rp;
@@ -123,8 +129,9 @@ $i_errs = 0;
 			print "[$i_test] failed($i_cnt) to chmod($perm, $rp)\n"; 
 		} else {
 			my $o_rp = File::Data->new($rp);			# perms
-			unless ((!$o_rp && $perm <= '0577') || 
-					( $o_rp && $perm >= '0600')) {
+			unless ((!$o_rp && $perm <= '0577' || 
+				  $o_rp && $root) || 
+				( $o_rp && $perm >= '0600')) {
 				$i_errs++;
 				print "[$i_test] invalid file($rp) perm($perm) => o_rp($o_rp)\n"; 
 			}
