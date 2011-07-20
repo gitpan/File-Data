@@ -1,53 +1,8 @@
-
-####
-# 
-# The module ExtUtils::STDmaker generated this file from the contents of
-#
-# Docs::Site_SVD::File_Data 
-#
-# Don't edit this file, edit instead
-#
-# Docs::Site_SVD::File_Data
-#
-#	ANY CHANGES MADE HERE WILL BE LOST
-#
-#       the next time ExtUtils::STDmaker generates it.
-#
-#
-
 use ExtUtils::MakeMaker;
-
-my $tests = join ' ',unix2os('t/File/Data.t');
-
-
+# See lib/ExtUtils/MakeMaker.pm for details of how to influence
+# the contents of the Makefile that is written.
 WriteMakefile(
-    NAME => 'File::Data',
-    DISTNAME => 'File-Data',
-    VERSION  => '0.07',
-    dist     => {COMPRESS => 'gzip',
-                'gz' => 'gz'},
-    test     => {TESTS => $tests},
-    PREREQ_PM => {'File::SmartNL' => '1.1',
-                  'File::Where' => '0.03',},
-    
-
-    ($] >= 5.005 ?     
-        (AUTHOR    => 'SoftwareDiamonds.com E<lt>support@SoftwareDiamonds.comE<gt>',
-        ABSTRACT  => 'Access the __DATA__ section of a program module without loading the program module.', ) : ()),
+    'NAME'		=> 'File::Data',
+    'VERSION_FROM'	=> 'lib/File/Data.pm', # finds $VERSION
+    'PREREQ_PM'		=> {}, # e.g., Module::Name => 1.1
 );
-
-
-
-use File::Spec;
-use File::Spec::Unix;
-sub unix2os
-{
-   my @file = ();
-   foreach my $file (@_) {
-       my (undef, $dir, $file_unix) = File::Spec::Unix->splitpath( $file );
-       my @dir = File::Spec::Unix->splitdir( $dir );
-       push @file, File::Spec->catfile( @dir, $file_unix);
-   }
-   @file;
-}
-
