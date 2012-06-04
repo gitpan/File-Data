@@ -3,7 +3,7 @@
 File::Data->new($FH); # \*FH?
 
 using Tie::Array|File to get at each line, instead of slurping?
- 
+
 use Tie::File
 
 use binmode
@@ -13,4 +13,6 @@ create()
 delete()
 
 concurrent access...?
+
+drop saving of data inbetween calls.
 
