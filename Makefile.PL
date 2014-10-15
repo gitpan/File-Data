@@ -3,6 +3,7 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     'NAME'		=> 'File::Data',
-    'VERSION_FROM'	=> 'File/Data.pm', # finds $VERSION
+    'VERSION_FROM'	=> 'lib/File/Data.pm', # finds $VERSION
     'PREREQ_PM'		=> {}, # e.g., Module::Name => 1.1
+    'PM'		=> { 'lib/File/Data.pm' => '$(INST_LIBDIR)/File/Data.pm' },
 );

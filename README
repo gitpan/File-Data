@@ -1,12 +1,16 @@
-# README for File::Data <C> 2012 Richard Foley file.data@rfi.net
 
-tar -xvzf File-Data.tar.gz
+# README for File::Data <C> 2001 Richard Foley file-data@rfi.net 
+# $Id: $
 
-cd File-Data
+	tar -xvzf File-Data.tar.gz
 
-perl Makefile.PL
+	cd File-Data
 
-make && make test && make install
+	perl Makefile.PL
 
-perldoc File::Data
+	make && make test && make install
+
+	perldoc File::Data
+
+:-)
 
