@@ -10,7 +10,7 @@ use FileHandle;
 # use Tie::File; # <- todo
 # use File::stat;
 use vars qw(@ISA $VERSION $AUTOLOAD);
-$VERSION = do { my @r = (q$Revision: 1.17 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.18 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 $| = 1;
 
 =head1 NAME
